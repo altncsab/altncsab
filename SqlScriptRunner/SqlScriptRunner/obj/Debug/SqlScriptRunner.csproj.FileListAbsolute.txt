@@ -1,0 +1,10 @@
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\bin\Debug\SqlScriptRunner.exe.config
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\bin\Debug\SqlScriptRunner.exe
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\bin\Debug\SqlScriptRunner.pdb
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\obj\Debug\SqlScriptRunner.csproj.AssemblyReference.cache
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\obj\Debug\SqlScriptRunner.Properties.Resources.resources
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\obj\Debug\SqlScriptRunner.SqlScriptRunnerMain.resources
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\obj\Debug\SqlScriptRunner.csproj.GenerateResource.cache
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\obj\Debug\SqlScriptRunner.csproj.CoreCompileInputs.cache
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\obj\Debug\SqlScriptRunner.exe
+E:\Work\altncsab\altncsab\SqlScriptRunner\SqlScriptRunner\obj\Debug\SqlScriptRunner.pdb
