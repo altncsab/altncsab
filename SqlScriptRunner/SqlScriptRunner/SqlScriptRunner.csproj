@@ -47,6 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\DbContext.cs" />
+    <Compile Include="Database\IQueryBase.cs" />
+    <Compile Include="Database\ListDatabases.cs" />
+    <Compile Include="Database\QueryBase.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Forms\ConnectToDatabaseForm.cs">
       <SubType>Form</SubType>
@@ -54,6 +57,7 @@
     <Compile Include="Forms\ConnectToDatabaseForm.Designer.cs">
       <DependentUpon>ConnectToDatabaseForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ScriptHandler\ObjectTypeNameEnum.cs" />
     <Compile Include="ScriptHandler\Script.cs" />
     <Compile Include="ScriptHandler\ScriptLoader.cs" />
     <Compile Include="ScriptHandler\ScriptSection.cs" />
@@ -66,6 +70,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\ConnectToDatabaseForm.resx">
+      <DependentUpon>ConnectToDatabaseForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

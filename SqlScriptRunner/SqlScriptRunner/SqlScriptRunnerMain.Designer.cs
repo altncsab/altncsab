@@ -38,6 +38,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.usersGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -52,7 +53,6 @@
             this.buttonInsertToDatabase = new System.Windows.Forms.Button();
             this.buttonMakeScript = new System.Windows.Forms.Button();
             this.richTextBoxGeneratedContent = new System.Windows.Forms.RichTextBox();
-            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -105,14 +105,16 @@
             // connectToDBToolStripMenuItem
             // 
             this.connectToDBToolStripMenuItem.Name = "connectToDBToolStripMenuItem";
-            this.connectToDBToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.connectToDBToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.connectToDBToolStripMenuItem.Text = "&Connect To DB";
+            this.connectToDBToolStripMenuItem.Click += new System.EventHandler(this.connectToDBToolStripMenuItem_Click);
             // 
             // disconnectToolStripMenuItem
             // 
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.disconnectToolStripMenuItem.Text = "&Disconnect";
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem1
             // 
@@ -145,6 +147,12 @@
             this.statusStrip1.Size = new System.Drawing.Size(901, 25);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(46, 20);
+            this.toolStripStatusLabel.Text = "Loaded";
             // 
             // panel1
             // 
@@ -282,6 +290,7 @@
             this.buttonInsertToDatabase.TabIndex = 1;
             this.buttonInsertToDatabase.Text = "Apply To DB";
             this.buttonInsertToDatabase.UseVisualStyleBackColor = true;
+            this.buttonInsertToDatabase.Click += new System.EventHandler(this.buttonInsertToDatabase_Click);
             // 
             // buttonMakeScript
             // 
@@ -302,12 +311,6 @@
             this.richTextBoxGeneratedContent.Size = new System.Drawing.Size(661, 470);
             this.richTextBoxGeneratedContent.TabIndex = 0;
             this.richTextBoxGeneratedContent.Text = "";
-            // 
-            // toolStripStatusLabel
-            // 
-            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
-            this.toolStripStatusLabel.Size = new System.Drawing.Size(46, 20);
-            this.toolStripStatusLabel.Text = "Loaded";
             // 
             // SqlScriptRunnerMain
             // 

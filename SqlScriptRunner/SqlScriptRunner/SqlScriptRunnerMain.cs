@@ -1,4 +1,6 @@
-﻿using SqlScriptRunner.ScriptHandler;
+﻿using SqlScriptRunner.Database;
+using SqlScriptRunner.Forms;
+using SqlScriptRunner.ScriptHandler;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,6 +22,7 @@ namespace SqlScriptRunner
         private bool checkingTreeNode;
         private bool isInitializing;
         private delegate void LogWriterDelegate(string message);
+        internal DbContext dbContext;
 
         public SqlScriptRunnerMain()
         {
@@ -254,6 +258,7 @@ namespace SqlScriptRunner
             finally
             {
                 treeViewFileStructure.EndUpdate();
+                Application.DoEvents();
                 AllowTreeNodeEvents();
             }
         }
@@ -337,6 +342,7 @@ namespace SqlScriptRunner
             finally
             {
                 treeViewFileStructure.EndUpdate();
+                Application.DoEvents();
                 AllowTreeNodeEvents();
                 // expandingTreeNode = false;
             }
@@ -458,8 +464,10 @@ namespace SqlScriptRunner
                     // create a script collection
                     var scriptLoader = new ScriptLoader(fileList, m => LogWriter(m));
                     await scriptLoader.LoadingTask;
-                    // TODO: Look inside those file and try to determine if they has specific content.
-                    scriptLoader.ProcessScripts();
+                    // Look inside those file and try to determine if they has specific content.
+                    await scriptLoader.ProcessScripts();
+                                        
+                    richTextBoxGeneratedContent.Text = scriptLoader.CreateScript();
                 }
                 else
                 {
@@ -475,6 +483,63 @@ namespace SqlScriptRunner
             finally
             {
                 buttonMakeScript.Enabled = true;
+            }
+        }
+
+        private void connectToDBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var connectToDB = new ConnectToDatabaseForm(dbContext);
+
+                if (connectToDB.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Initialize new DB Context with the data and store it.
+                    dbContext = (DbContext)connectToDB.Tag;
+                    SetHeaderText();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                ShowErrorMessage(ex);
+            }
+        }
+
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                dbContext = null;
+                SetHeaderText();
+            }
+            catch (Exception ex)
+            {
+
+                ShowErrorMessage(ex);
+            }
+        }
+
+        private void SetHeaderText()
+        {
+            this.Text = "Sql Script Runner";
+            if (dbContext != null)
+            {
+                this.Text += $" {dbContext.ConnectionStringBuilder.InitialCatalog}@{dbContext.ConnectionStringBuilder.DataSource}";
+            }
+            buttonInsertToDatabase.Enabled = dbContext != null;
+        }
+
+        private void buttonInsertToDatabase_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // TODO: 
+            }
+            catch (Exception ex)
+            {
+
+                ShowErrorMessage(ex);
             }
         }
     }

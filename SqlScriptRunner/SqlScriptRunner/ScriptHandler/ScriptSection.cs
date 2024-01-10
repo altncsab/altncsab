@@ -20,7 +20,10 @@ namespace SqlScriptRunner.ScriptHandler
 
         public string ObjectSchema { get; private set; }
         public string ObjectName { get; private set; }
-        public string ObjectTypeName { get; private set; }
+        public ObjectTypeNameEnum ObjectTypeName { get; private set; }
+
+        public bool IsOpenBlockComment { get; set; }
+
         public List<string> DependentObjectNames { get; private set; }
 
         public ScriptSection(string filePath, string originalContent)
@@ -65,7 +68,7 @@ namespace SqlScriptRunner.ScriptHandler
                     var fragmentGo = originalContent.Substring(startIndex, endIndex - startIndex);
                     if (Regex.IsMatch(fragmentGo, @"(?:\W|^)(?<!\[)GO(?!])(?:\W|$)", RegexOptions.IgnoreCase))
                     {
-                        scriptSections.Add(new ScriptSection(filePath, scriptSection.ToString(), sectionCount, sectionStart));
+                        scriptSections.Add(new ScriptSection(filePath, scriptSection.ToString().TrimNewLine(), sectionCount, sectionStart) { IsOpenBlockComment = isBlockComment});
                         sectionCount++;                       
                         scriptSection = new StringWriter();
                         i++;
@@ -78,7 +81,7 @@ namespace SqlScriptRunner.ScriptHandler
             var lastBlock = scriptSection.ToString();
             if (!string.IsNullOrWhiteSpace(lastBlock))
             {
-                scriptSections.Add(new ScriptSection(filePath, lastBlock, sectionCount, sectionStart));
+                scriptSections.Add(new ScriptSection(filePath, lastBlock, sectionCount, sectionStart) { IsOpenBlockComment = isBlockComment });
             }
             return scriptSections;
         }
@@ -92,6 +95,11 @@ namespace SqlScriptRunner.ScriptHandler
             {
                 // this section contains a Table creation alteration script
                 ProcessTable();
+            }
+            else if (Regex.IsMatch(this.Content, @"(?:\s|^)(?:CREATE|ALTER)\s+VIEW\s+\[?[\w\.\[\]]+?\s"
+                , RegexOptions.IgnoreCase | RegexOptions.Singleline))
+            {
+                ProcessView();
             }
             else if (Regex.IsMatch(this.Content, @"(?:\s|^)(?:CREATE|ALTER)\s+PROC(EDURE)?\s+\[?[\w\.\[\]]+?\s"
                 , RegexOptions.IgnoreCase | RegexOptions.Singleline))
@@ -129,25 +137,28 @@ namespace SqlScriptRunner.ScriptHandler
                 , RegexOptions.IgnoreCase | RegexOptions.Singleline);
             if (match.Success)
             {
-                SetProcessedProperties(match, "FUNCTION");
+                SetProcessedProperties(match, ObjectTypeNameEnum.Function);
             }
             // look for parameter definitions.
             // TODO: Check the bracket matching... we need only the first closing bracket. I probably need to give up regex hire.
-            match = Regex.Match(this.Content, @"(?<=(?:CREATE|ALTER)\s+FUNCTION\s+[\w\.\[\]]+?[\s\(]+?).+(?=\))(?!\()"
+            match = Regex.Match(this.Content, @"(?<=(?:CREATE|ALTER)\s+FUNCTION\s+[\w\.\[\]]+?(?=[\s\(]+?)).+(?=\))(?!\()"
                 , RegexOptions.IgnoreCase | RegexOptions.Singleline);
             if (match.Success)
             {
-                ProcessParameters(match);
+                ProcessParameters(match, true);
             }
         }
 
-        private void SetProcessedProperties(Match match, string typeName)
+        private void SetProcessedProperties(Match match, ObjectTypeNameEnum typeName)
         {
-            var nameElements = match.Value.Replace("[", "").Replace("]", "").Split('.');
-            var objectName = nameElements.LastOrDefault();
+            var nameElements = match?.Value.Replace("[", "").Replace("]", "").Split('.');
+            var objectName = nameElements?.LastOrDefault();
             this.ObjectName = objectName.Trim();
             this.ObjectTypeName = typeName;
-            this.ObjectSchema = (nameElements.Count() <= 1 ? "dbo" : nameElements[nameElements.Count() - 2]).Trim();
+            if (nameElements != null)
+            {
+                this.ObjectSchema = (nameElements.Count() <= 1 ? "dbo" : nameElements[nameElements.Count() - 2]).Trim();
+            }
         }
 
         private void ProcessType()
@@ -156,12 +167,12 @@ namespace SqlScriptRunner.ScriptHandler
                 , RegexOptions.IgnoreCase | RegexOptions.Singleline);
             if (match.Success)
             {
-                SetProcessedProperties(match, "TYPE");
+                SetProcessedProperties(match, ObjectTypeNameEnum.Type);
             }
             // it can be a value type but the base type can be only standard SQL type
-            match = Regex.Match(this.Content, @"(?<=CREATE\s+TYPE\s+[\w\.\[\]]+?\s+?AS\s+?TABLE\s+\s?\().+(?=\))(?!\()"
+            match = Regex.Match(this.Content, @"(?<=CREATE\s+TYPE\s+[\w\.\[\]]+?\s+?AS\s+?TABLE(?:\s?\()).+(?=\))(?!\()"
                 , RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            if (!match.Success)
+            if (match.Success)
             {
                 ProcessTableColumns(match);
             }
@@ -173,7 +184,7 @@ namespace SqlScriptRunner.ScriptHandler
                 , RegexOptions.IgnoreCase | RegexOptions.Singleline);
             if (match.Success)
             {
-                SetProcessedProperties(match, "PROCEDURE");
+                SetProcessedProperties(match, ObjectTypeNameEnum.Procedure);
             }
             
             // look for parameter definitions.
@@ -181,19 +192,29 @@ namespace SqlScriptRunner.ScriptHandler
                 , RegexOptions.IgnoreCase | RegexOptions.Singleline);
             if (match.Success)
             {
-                ProcessParameters(match);
+                ProcessParameters(match, false);
             }
         }
 
-        private void ProcessParameters(Match match)
+        private void ProcessParameters(Match match, bool isBrackets)
         {
-            var paramLines = Regex.Split(match.Value, @"(?!(?<=\(.*?[^\)]),(?=.*?\))),");
+            // parameters are in brackets
+            string bracketedParams;
+            if (isBrackets)
+            {
+                bracketedParams = match.Value.FirstBracketContent();
+            }
+            else
+            {
+                bracketedParams = match.Value;
+            }
+            var paramLines = Regex.Split(bracketedParams, @"(?!(?<=\(.*?[^\)]),(?=.*?\))),");
             if (paramLines.Length > 0)
             {
                 foreach (string pline in paramLines)
                 {
                     // TODO: consider the word AS between the parameter name and type value
-                    var m = Regex.Match(pline, @"(?<name>(?<=\s|^)@\w+?(?=\s))(?:(?(?<=\s+?)AS(?=\s+?))|(?:\s+?))(?<type>((?<=\s+?)\w[\w\.]+?(?=\(|\s|$)))"
+                    var m = Regex.Match(pline, @"(?<name>(?<=\s|^)@\w+?(?=\s))(?:\s+?(AS\s+?)?)(?<type>((?<=\s+?)\w[\w\.]+?(?=\(|\s|$)))"
                         , RegexOptions.IgnoreCase | RegexOptions.Singleline);
                     if (m.Success
                         && !string.IsNullOrWhiteSpace(m.Groups["type"].Value)
@@ -209,7 +230,15 @@ namespace SqlScriptRunner.ScriptHandler
                 }
             }
         }
-
+        private void ProcessView()
+        {
+            var match = Regex.Match(this.Content, @"(?<=(?:CREATE|ALTER)\s+VIEW\s+)[\w\.\[\]]+?(?=\s+?)"
+                , RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            if (match.Success)
+            {
+                SetProcessedProperties(match, ObjectTypeNameEnum.View);
+            }
+        }
         private void ProcessTable()
         {
             // this is a table creation inside. Get the table name out.
@@ -225,7 +254,7 @@ namespace SqlScriptRunner.ScriptHandler
                 {
                     // it is not a temporary table
                     this.ObjectName = objectName.Trim();
-                    this.ObjectTypeName = "TABLE";
+                    this.ObjectTypeName = ObjectTypeNameEnum.Table;
                     this.ObjectSchema = (nameElements.Count() <= 1 ? "dbo" : nameElements[nameElements.Count() - 2]).Trim();
                 }
             }

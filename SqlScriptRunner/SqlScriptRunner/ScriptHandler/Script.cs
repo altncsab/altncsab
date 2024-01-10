@@ -17,22 +17,13 @@ namespace SqlScriptRunner.ScriptHandler
         public string OriginalContent { get; private set; }
 
         public string Content {  get; private set; }
+
         public IList<ScriptSection> ScriptSections { get; private set; }
 
-        public Script(string filePath, string originalContent)
+        public Script(string filePath, IList<ScriptSection> scriptSections)
         {
             FilePath = filePath;
-            OriginalContent = originalContent;
-            Content = originalContent.CleanComment();
-        }
-
-        private void CleanScript()
-        {
-            // TODO: remove comments and slice the content over GO
-            using (var sw = new StringWriter())
-            {
-
-            }
+            ScriptSections = scriptSections;
         }
     }
 }
