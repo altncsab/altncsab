@@ -5,7 +5,7 @@
   I have experince on Microsoft Stack.
 - 🌱 I’m currently looking for a company to work for
 - 💞️ I’m looking to collaborate on anything
-- 📫 email me at csaba_nagy_flex@hotmail.com ...
+- 📫 email me at <csaba_nagy_flex@hotmail.com> ...
 
 <!---
 altncsab/altncsab is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
