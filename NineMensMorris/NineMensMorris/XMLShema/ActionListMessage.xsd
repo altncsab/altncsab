@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="ActionList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header" minOccurs="1" maxOccurs="1" >
+          <xs:complexType>
+            <xs:attribute name="HostName" type="xs:string" use="required" />
+            <xs:attribute name="IsAbort" type="xs:boolean" use="required" />
+            <xs:attribute name="Message" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element maxOccurs="unbounded" minOccurs="0" name="ActionList">
+          <xs:complexType>
+            <xs:attribute name="Position" type="Position" use="required" />
+            <xs:attribute name="GameMode" type="GameMode" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name = "Position" final="restriction">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="A1" />
+      <xs:enumeration value="A2" />
+      <xs:enumeration value="A3" />
+      <xs:enumeration value="A4" />
+      <xs:enumeration value="A5" />
+      <xs:enumeration value="A6" />
+      <xs:enumeration value="A7" />
+      <xs:enumeration value="A8" />
+      <xs:enumeration value="B1" />
+      <xs:enumeration value="B2" />
+      <xs:enumeration value="B3" />
+      <xs:enumeration value="B4" />
+      <xs:enumeration value="B5" />
+      <xs:enumeration value="B6" />
+      <xs:enumeration value="B7" />
+      <xs:enumeration value="B8" />
+      <xs:enumeration value="C1" />
+      <xs:enumeration value="C2" />
+      <xs:enumeration value="C3" />
+      <xs:enumeration value="C4" />
+      <xs:enumeration value="C5" />
+      <xs:enumeration value="C6" />
+      <xs:enumeration value="C7" />
+      <xs:enumeration value="C8" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="GameMode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SetUp" />
+      <xs:enumeration value="Mark"/>
+      <xs:enumeration value="Move"/>
+      <xs:enumeration value="Remove" />
+      <xs:enumeration value="Remove2" />
+      <xs:enumeration value="Jump" />
+      <xs:enumeration value="End" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

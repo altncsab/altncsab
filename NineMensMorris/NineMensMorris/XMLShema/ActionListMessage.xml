@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ActionList>
+  <Header HostName="myName" IsAbort="false" Message=""/>
+  <ActionList Position="A1" GameMode="Move" />
+  <ActionList Position="A2" GameMode="Select" />
+</ActionList>

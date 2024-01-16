@@ -22,4 +22,5 @@ This is a multipurpose repo. It will contain multiple solution with different to
 ## Content
 
 - [Sql Script Runner](./SqlScriptRunner/Readme.md)
+- [Nine Mens Morris](./NineMensMorris/README.md)
 - Coming soon
