@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SqlScriptRunner.Logger;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +15,15 @@ namespace SqlScriptRunner.Database
         
         int ReturnCode { get; }
 
-        string[] Messages { get; }
+        List<string> Messages { get; }
 
-        Action<string> LogFunction { get; set; }
+        Action<string, LogLevelEnum?> LogFunction { get; set; }
+
+        bool WithTransaction { get; set; }
+
+        SqlTransaction Transaction { get; set; }
+
+        SqlConnection SqlConnection { get; set; }
 
         object Execute(DbContext dbContext, string cmdText, params object[] args);
 

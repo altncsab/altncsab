@@ -20,11 +20,11 @@ namespace SqlScriptRunner.Database
 
             commandText = commandTemplate;
 
-            var conn = dbContext.Connection;
+            SqlConnection = dbContext.Connection;
             DataTable dt = new DataTable();
-            using (var cmd = new SqlCommand(commandText, conn))
+            using (var cmd = new SqlCommand(commandText, SqlConnection))
             {
-                conn.Open();
+                SqlConnection.Open();
                 var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 
                 dt.Load(reader);                

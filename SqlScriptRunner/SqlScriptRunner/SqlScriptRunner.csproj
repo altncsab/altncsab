@@ -46,10 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database\ApplyScript.cs" />
     <Compile Include="Database\DbContext.cs" />
     <Compile Include="Database\IQueryBase.cs" />
     <Compile Include="Database\ListDatabases.cs" />
     <Compile Include="Database\QueryBase.cs" />
+    <Compile Include="Extensions\FormExtensions.cs" />
+    <Compile Include="Extensions\RichTextBoxExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Forms\ConnectToDatabaseForm.cs">
       <SubType>Form</SubType>
@@ -57,6 +60,14 @@
     <Compile Include="Forms\ConnectToDatabaseForm.Designer.cs">
       <DependentUpon>ConnectToDatabaseForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ScriptExecutionMonitorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ScriptExecutionMonitorForm.Designer.cs">
+      <DependentUpon>ScriptExecutionMonitorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Logger\LogLevel.cs" />
+    <Compile Include="ScriptHandler\ExecutionStatusEnum.cs" />
     <Compile Include="ScriptHandler\ObjectTypeNameEnum.cs" />
     <Compile Include="ScriptHandler\Script.cs" />
     <Compile Include="ScriptHandler\ScriptLoader.cs" />
@@ -72,6 +83,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\ConnectToDatabaseForm.resx">
       <DependentUpon>ConnectToDatabaseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ScriptExecutionMonitorForm.resx">
+      <DependentUpon>ScriptExecutionMonitorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -100,7 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
-    <Folder Include="Logger\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

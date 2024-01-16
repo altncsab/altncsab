@@ -1,5 +1,7 @@
 ﻿using SqlScriptRunner.Database;
+using SqlScriptRunner.Extensions;
 using SqlScriptRunner.Forms;
+using SqlScriptRunner.Logger;
 using SqlScriptRunner.ScriptHandler;
 using System;
 using System.Collections.Generic;
@@ -10,8 +12,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Configuration;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static SqlScriptRunner.ScriptHandler.ScriptLoader;
 
 namespace SqlScriptRunner
 {
@@ -21,9 +25,10 @@ namespace SqlScriptRunner
         private bool expandingTreeNode;
         private bool checkingTreeNode;
         private bool isInitializing;
-        private delegate void LogWriterDelegate(string message);
+        private delegate void LogWriterDelegate(string message, LogLevelEnum? logLevel);
         internal DbContext dbContext;
-
+        private StatusCallBackDelegate scriptStatusCallBack;
+        private CancellationTokenSource cancellationTokenSource;
         public SqlScriptRunnerMain()
         {
             InitializeComponent();
@@ -50,7 +55,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }finally
             {
                 isInitializing = false;
@@ -61,7 +66,7 @@ namespace SqlScriptRunner
         {
             try
             {
-                 var dialoge = new FolderBrowserDialog() { RootFolder = Environment.SpecialFolder.UserProfile, SelectedPath = lastUsedFolderName};
+                 var dialoge = new FolderBrowserDialog() { RootFolder = Environment.SpecialFolder.MyComputer, SelectedPath = lastUsedFolderName};
                 if( dialoge.ShowDialog(this) == DialogResult.OK )
                 {
                     lastUsedFolderName = dialoge.SelectedPath;
@@ -73,7 +78,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
 
         }
@@ -151,11 +156,6 @@ namespace SqlScriptRunner
             }
         }
 
-        private void ShowErrorMessage(Exception ex)
-        {
-            MessageBox.Show(this, ex.ToString(), "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
         private void treeViewFileStructure_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             try
@@ -172,7 +172,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -196,7 +196,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
         private void AllowTreeNodeEvents(bool allowed = true)
@@ -217,7 +217,7 @@ namespace SqlScriptRunner
 
         private void TreeViewFileStructure_BeforeCheck(object sender, TreeViewCancelEventArgs e)
         {
-            if (isInitializing) return;
+            if (isInitializing || checkingTreeNode) return;
             try
             {
                 if (e.Node != null && e.Node.Tag == null && e.Node.Nodes.Count > 0)
@@ -231,7 +231,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
             finally
             {
@@ -240,12 +240,13 @@ namespace SqlScriptRunner
 
         private void treeViewFileStructure_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            if (isInitializing) return;
+            if (isInitializing || checkingTreeNode) return;
             try
             {
                 if (e.Node != null && e.Node.Tag == null && e.Node.Nodes.Count > 0)
                 {
                     AllowTreeNodeEvents(false);
+                    checkingTreeNode = true;
                     treeViewFileStructure.BeginUpdate();
                     SetCheckAllTreeNode(e.Node);
                 }
@@ -253,13 +254,15 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
             finally
             {
                 treeViewFileStructure.EndUpdate();
-                Application.DoEvents();
+
                 AllowTreeNodeEvents();
+                checkingTreeNode = false;
+                Application.DoEvents();
             }
         }
         private List<string> CollectAllCheckedFiles()
@@ -324,12 +327,13 @@ namespace SqlScriptRunner
         }
         private void treeViewFileStructure_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            if (isInitializing) return;
+            if (isInitializing || checkingTreeNode) return;
             try
             {
                 // Get the full path and the base path and reinitialize the node structure
                 // expandingTreeNode = true;
                 AllowTreeNodeEvents(false);
+                checkingTreeNode = true;
                 treeViewFileStructure.BeginUpdate();
                 e.Node.Nodes.Clear();
                 PopulateSubFolders(Path.Combine(lastUsedFolderName, e.Node.FullPath), e.Node, 0);
@@ -337,13 +341,14 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
             finally
             {
                 treeViewFileStructure.EndUpdate();
                 Application.DoEvents();
                 AllowTreeNodeEvents();
+                checkingTreeNode = false;
                 // expandingTreeNode = false;
             }
         }
@@ -365,7 +370,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -386,7 +391,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -416,7 +421,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -430,17 +435,21 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
         private void LogWriter(string message)
+        {
+            LogWriter(message, LogLevelEnum.Debug);
+        }
+        private void LogWriter(string message, LogLevelEnum? logLevel )
         {
             try
             {
                 if (this.InvokeRequired)
                 {
                     var op = new LogWriterDelegate(LogWriter);
-                    this.Invoke(op, message);
+                    this.Invoke(op, message, logLevel);
                 }
                 else
                 {
@@ -450,23 +459,34 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
+        }
+        private async Task<ScriptLoader> PrepareScripts()
+        {
+            ScriptLoader scriptLoader = null;
+            var fileList = CollectAllCheckedFiles();
+
+            if (fileList.Count > 0)
+            {
+                // create a script collection
+                scriptLoader = new ScriptLoader(fileList, (m,level) => LogWriter(m,level));
+                await scriptLoader.LoadingTask;
+                // Look inside those file and try to determine if they has specific content.
+                await scriptLoader.ProcessScripts();                
+            }
+
+            return scriptLoader;
         }
         private async void buttonMakeScript_Click(object sender, EventArgs e)
         {
             try
             {
                 buttonMakeScript.Enabled = false;
+                var scriptLoader = await PrepareScripts();
                 var fileList = CollectAllCheckedFiles();
-                if (fileList.Count > 0)
+                if (scriptLoader != null)
                 {
-                    // create a script collection
-                    var scriptLoader = new ScriptLoader(fileList, m => LogWriter(m));
-                    await scriptLoader.LoadingTask;
-                    // Look inside those file and try to determine if they has specific content.
-                    await scriptLoader.ProcessScripts();
-                                        
                     richTextBoxGeneratedContent.Text = scriptLoader.CreateScript();
                 }
                 else
@@ -478,7 +498,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
             finally
             {
@@ -502,7 +522,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -516,7 +536,7 @@ namespace SqlScriptRunner
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -530,16 +550,90 @@ namespace SqlScriptRunner
             buttonInsertToDatabase.Enabled = dbContext != null;
         }
 
-        private void buttonInsertToDatabase_Click(object sender, EventArgs e)
+        private async void buttonInsertToDatabase_Click(object sender, EventArgs e)
         {
             try
             {
-                // TODO: 
+                var scriptLoader = await PrepareScripts();
+                // Open the script execution monitor for monitoring the script execution
+                if (scriptLoader != null)
+                {
+                    var monitor = new ScriptExecutionMonitorForm(scriptLoader, DatabaseInsertionCommands);
+                    cancellationTokenSource = new CancellationTokenSource();
+                    // Add call back references to the monitor to start up the script execution
+                    scriptStatusCallBack = new StatusCallBackDelegate(monitor.StatusUpdate);
+                    monitor.ShowDialog(this);
+                }
+                else
+                {
+                    throw new Exception("There is no file selected'");
+                }
             }
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
+            }
+        }
+
+        private void DatabaseInsertionCommands(ScriptLoader scriptLoader, string command)
+        {
+            // TODO: implement Start, Cancel commands
+            switch (command)
+            {
+                case "Start":
+                    // TODO: Start the asynchronous procedure to apply DB scripts into database. Use Cancellation token.
+                    richTextBoxGeneratedContent.Clear();
+                    ExecutionLogAction("Start executing sequence", LogLevelEnum.Info);
+                    scriptLoader.ApplyScriptsToDatabase(dbContext, ExecutionLogAction, scriptStatusCallBack, cancellationTokenSource.Token);
+                    break;
+                case "Cancel":
+                    // TODO: Cancel and roll back
+                    cancellationTokenSource.Cancel(throwOnFirstException: true);
+                    break;
+                default:
+                    break;
+            }
+        }
+        private void ExecutionLogAction(string str)
+        {
+            ExecutionLogAction(str, LogLevelEnum.Debug);
+        }
+        private void ExecutionLogAction(string str, LogLevelEnum? logLevel)
+        {
+            if (InvokeRequired)
+            {
+                LogWriterDelegate op = new LogWriterDelegate(ExecutionLogAction);
+                Invoke(op, str, logLevel);
+                Application.DoEvents();
+            }
+            else
+            {
+                var textColor = Color.Black;
+                if (logLevel != null)
+                {
+                    switch (logLevel.Value)
+                    {
+                        case LogLevelEnum.Debug:
+                            textColor = Color.Black;
+                            break;
+                        case LogLevelEnum.Info:
+                            textColor = Color.Blue;
+                            break;
+                        case LogLevelEnum.Warn:
+                            textColor = Color.Orange;
+                            break;
+                        case LogLevelEnum.Error:
+                            textColor = Color.Red;
+                            break;
+                        default:
+                            textColor = Color.Black;
+                            break;
+                    }
+                }
+                richTextBoxGeneratedContent.AppendText($"{DateTime.Now:u}: {str}\n",textColor);
+                richTextBoxGeneratedContent.ScrollToCaret();
+                richTextBoxGeneratedContent.ForeColor = Color.Black;
             }
         }
     }

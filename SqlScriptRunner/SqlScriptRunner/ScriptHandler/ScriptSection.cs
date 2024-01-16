@@ -12,12 +12,14 @@ namespace SqlScriptRunner.ScriptHandler
 {
     internal class ScriptSection
     {
+        public Script Script { get; set; }
         public string OriginalContent { get; private set; }
         public string Content { get; private set; }
         public string FilePath { get; private set; }
         public int SectionId { get; private set; }
         public int SectionOffset { get; private set; }
-
+        public ExecutionStatusEnum? Status { get; set; }
+        public List<string> MessageLog { get; set; }
         public string ObjectSchema { get; private set; }
         public string ObjectName { get; private set; }
         public ObjectTypeNameEnum ObjectTypeName { get; private set; }
@@ -26,14 +28,18 @@ namespace SqlScriptRunner.ScriptHandler
 
         public List<string> DependentObjectNames { get; private set; }
 
-        public ScriptSection(string filePath, string originalContent)
+        public ScriptSection()
+        {
+            MessageLog = new List<string>();
+        }
+        public ScriptSection(string filePath, string originalContent) : this()
         {
             FilePath = filePath;
             OriginalContent = originalContent;
             Content = originalContent.CleanComment();            
             ProcessScript();
         }
-        public ScriptSection(string filePath, string originalContent, int sectionId, int sectionOffset)
+        public ScriptSection(string filePath, string originalContent, int sectionId, int sectionOffset): this()
         {
             FilePath = filePath;
             OriginalContent = originalContent;
@@ -213,7 +219,7 @@ namespace SqlScriptRunner.ScriptHandler
             {
                 foreach (string pline in paramLines)
                 {
-                    // TODO: consider the word AS between the parameter name and type value
+                    // consider the word AS between the parameter name and type value
                     var m = Regex.Match(pline, @"(?<name>(?<=\s|^)@\w+?(?=\s))(?:\s+?(AS\s+?)?)(?<type>((?<=\s+?)\w[\w\.]+?(?=\(|\s|$)))"
                         , RegexOptions.IgnoreCase | RegexOptions.Singleline);
                     if (m.Success

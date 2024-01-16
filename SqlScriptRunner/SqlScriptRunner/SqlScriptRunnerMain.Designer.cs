@@ -105,14 +105,14 @@
             // connectToDBToolStripMenuItem
             // 
             this.connectToDBToolStripMenuItem.Name = "connectToDBToolStripMenuItem";
-            this.connectToDBToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.connectToDBToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.connectToDBToolStripMenuItem.Text = "&Connect To DB";
             this.connectToDBToolStripMenuItem.Click += new System.EventHandler(this.connectToDBToolStripMenuItem_Click);
             // 
             // disconnectToolStripMenuItem
             // 
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.disconnectToolStripMenuItem.Text = "&Disconnect";
             this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 

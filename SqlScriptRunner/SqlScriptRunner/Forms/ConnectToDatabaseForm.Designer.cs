@@ -35,14 +35,14 @@
             this.lableIsTrusted = new System.Windows.Forms.Label();
             this.labelUserName = new System.Windows.Forms.Label();
             this.panelButtons = new System.Windows.Forms.Panel();
+            this.buttonQueryDB = new System.Windows.Forms.Button();
+            this.buttonCancel = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
             this.textBoxServer = new System.Windows.Forms.TextBox();
             this.checkBoxIsTrusted = new System.Windows.Forms.CheckBox();
             this.textBoxUserName = new System.Windows.Forms.TextBox();
             this.textBoxPassword = new System.Windows.Forms.TextBox();
             this.comboBoxDatabase = new System.Windows.Forms.ComboBox();
-            this.buttonSave = new System.Windows.Forms.Button();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.buttonQueryDB = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panelButtons.SuspendLayout();
             this.SuspendLayout();
@@ -141,6 +141,39 @@
             this.panelButtons.Size = new System.Drawing.Size(544, 24);
             this.panelButtons.TabIndex = 5;
             // 
+            // buttonQueryDB
+            // 
+            this.buttonQueryDB.Dock = System.Windows.Forms.DockStyle.Right;
+            this.buttonQueryDB.Location = new System.Drawing.Point(340, 0);
+            this.buttonQueryDB.Name = "buttonQueryDB";
+            this.buttonQueryDB.Size = new System.Drawing.Size(68, 24);
+            this.buttonQueryDB.TabIndex = 2;
+            this.buttonQueryDB.Text = "Query DB";
+            this.buttonQueryDB.UseVisualStyleBackColor = true;
+            this.buttonQueryDB.Click += new System.EventHandler(this.buttonQueryDB_Click);
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonCancel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.buttonCancel.Location = new System.Drawing.Point(408, 0);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(68, 24);
+            this.buttonCancel.TabIndex = 1;
+            this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Dock = System.Windows.Forms.DockStyle.Right;
+            this.buttonSave.Location = new System.Drawing.Point(476, 0);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(68, 24);
+            this.buttonSave.TabIndex = 0;
+            this.buttonSave.Text = "Save";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
             // textBoxServer
             // 
             this.textBoxServer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -194,38 +227,6 @@
             this.comboBoxDatabase.Size = new System.Drawing.Size(437, 21);
             this.comboBoxDatabase.TabIndex = 10;
             this.comboBoxDatabase.TextChanged += new System.EventHandler(this.comboBoxDatabase_TextChanged);
-            // 
-            // buttonSave
-            // 
-            this.buttonSave.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonSave.Location = new System.Drawing.Point(476, 0);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(68, 24);
-            this.buttonSave.TabIndex = 0;
-            this.buttonSave.Text = "Save";
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
-            // 
-            // buttonCancel
-            // 
-            this.buttonCancel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonCancel.Location = new System.Drawing.Point(408, 0);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(68, 24);
-            this.buttonCancel.TabIndex = 1;
-            this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
-            // 
-            // buttonQueryDB
-            // 
-            this.buttonQueryDB.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonQueryDB.Location = new System.Drawing.Point(340, 0);
-            this.buttonQueryDB.Name = "buttonQueryDB";
-            this.buttonQueryDB.Size = new System.Drawing.Size(68, 24);
-            this.buttonQueryDB.TabIndex = 2;
-            this.buttonQueryDB.Text = "Query DB";
-            this.buttonQueryDB.UseVisualStyleBackColor = true;
-            this.buttonQueryDB.Click += new System.EventHandler(this.buttonQueryDB_Click);
             // 
             // ConnectToDatabaseForm
             // 

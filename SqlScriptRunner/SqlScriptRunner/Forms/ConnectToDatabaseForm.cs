@@ -1,4 +1,5 @@
 ﻿using SqlScriptRunner.Database;
+using SqlScriptRunner.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ using System.Windows.Forms;
 
 namespace SqlScriptRunner.Forms
 {
-    public partial class ConnectToDatabaseForm : Form
+    internal partial class ConnectToDatabaseForm : Form
     {
         private DbContext Db;
 
@@ -47,10 +48,6 @@ namespace SqlScriptRunner.Forms
             return isValid;
         }
 
-        private void ShowErrorMessage(Exception ex)
-        {
-            MessageBox.Show(this, ex.ToString(), "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
         private DbContext BuildDbContext()
         {
             DbContext result = null;
@@ -98,7 +95,7 @@ namespace SqlScriptRunner.Forms
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -112,7 +109,7 @@ namespace SqlScriptRunner.Forms
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -143,7 +140,7 @@ namespace SqlScriptRunner.Forms
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -160,7 +157,7 @@ namespace SqlScriptRunner.Forms
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -173,7 +170,7 @@ namespace SqlScriptRunner.Forms
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -186,7 +183,7 @@ namespace SqlScriptRunner.Forms
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -199,7 +196,7 @@ namespace SqlScriptRunner.Forms
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
 
@@ -212,7 +209,7 @@ namespace SqlScriptRunner.Forms
             catch (Exception ex)
             {
 
-                ShowErrorMessage(ex);
+                this.ShowErrorMessage(ex);
             }
         }
     }
