@@ -261,8 +261,8 @@ namespace SqlScriptRunner
                 treeViewFileStructure.EndUpdate();
 
                 AllowTreeNodeEvents();
+                // Application.DoEvents();
                 checkingTreeNode = false;
-                Application.DoEvents();
             }
         }
         private List<string> CollectAllCheckedFiles()
@@ -346,7 +346,7 @@ namespace SqlScriptRunner
             finally
             {
                 treeViewFileStructure.EndUpdate();
-                Application.DoEvents();
+                // Application.DoEvents();
                 AllowTreeNodeEvents();
                 checkingTreeNode = false;
                 // expandingTreeNode = false;
