@@ -40,3 +40,9 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+
+      # pandok test
+      - run: echo "foo" > input.txt
+      - uses: docker://pandoc/core:2.9
+        with:
+          args: "--help"
