@@ -21,3 +21,9 @@ jobs:
             
             - name: Build SQL Scrip Runner
               run: msbuild SqlScriptRunner\SqlScriptRunner\SqlScriptRunner.csproj -t:rebuild -property:Configuration=Release
+
+            - uses: actions/upload-artifact@v4
+              with:
+                name: Upload Artifact SqlScriptRunner.exe
+                path: SqlScriptRunner\SqlScriptRunner\bin\Release\SqlScriptRunner.exe
+                
