@@ -1,0 +1,31 @@
+name: NineMensMorris
+
+on:
+    pull_request:
+        branches: ['main']
+        paths:
+            - 'NineMensMorris/NineMensMorris'
+    
+    workflow_dispatch:
+
+jobs:
+
+    build:
+        runs-on: windows-latest
+
+        steps:            
+            - uses: actions/checkout@v3
+              with:
+                name: CheckOut
+                path: 'NineMensMorris'
+            - name: MsBuild setup
+              uses: microsoft/setup-msbuild@v1.1
+            
+            - name: Build Nine Mens Morris
+              run: msbuild NineMensMorris\NineMensMorris.csproj -t:rebuild -property:Configuration=Release
+
+            - uses: actions/upload-artifact@v4
+              with:
+                name: Upload Artifact NineMensMorris.exe
+                path: NineMensMorris\NineMensMorris\bin\Release\NineMensMorris.exe
+                
