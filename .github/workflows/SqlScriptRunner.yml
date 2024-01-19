@@ -1,0 +1,23 @@
+name: SqlScriptRunner
+
+on:
+    pull_request:
+        branches: ['main']
+        paths:
+            - 'SqlScripRunner/SqlScriptRunner'
+    
+    workflow_dispatch:
+
+jobs:
+
+    build:
+        runs-on: windows-latest
+
+        steps:
+            - name: CheckOut
+              uses: actions/checkout@v3
+            - name: MsBuild setup
+              uses: microsoft/setup-msbuild@v1.1
+            
+            - name: Build SQL Scrip Runner
+              run: msbuild SqlScriptRunner\SqlScriptTunner\SqlScripRunner.csproj -t:rebuild -property:Configuration=Release
