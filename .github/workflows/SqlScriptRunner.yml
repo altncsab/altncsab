@@ -35,7 +35,7 @@ jobs:
               with:
                 args: >-
                   --output=UsersGuide.rtf
-                  SqlScriptRunner/UsersGuide/Readme.md
+                  SqlScriptRunner/UsersGuide/UsersGuide.md
             - uses: actions/upload-artifact@v4
               with:
                 name: Upload Artifact UsersGuide.rtf
