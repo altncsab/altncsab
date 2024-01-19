@@ -13,11 +13,12 @@ jobs:
     build:
         runs-on: windows-latest
 
-        steps:            
+        steps:     
+            - name: CheckOut
             - uses: actions/checkout@v3
-              with:
-                name: CheckOut
+              with:                
                 path: 'NineMensMorris'
+                fetch-depth: 3
             - name: MsBuild setup
               uses: microsoft/setup-msbuild@v1.1
             
