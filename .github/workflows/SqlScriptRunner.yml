@@ -20,4 +20,4 @@ jobs:
               uses: microsoft/setup-msbuild@v1.1
             
             - name: Build SQL Scrip Runner
-              run: msbuild SqlScriptRunner\SqlScriptTunner\SqlScripRunner.csproj -t:rebuild -property:Configuration=Release
+              run: msbuild SqlScriptRunner\SqlScriptRunner\SqlScripRunner.csproj -t:rebuild -property:Configuration=Release
