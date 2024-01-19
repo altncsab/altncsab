@@ -31,10 +31,11 @@ jobs:
             - name: CheckOut
               uses: actions/checkout@v3
             - name: Build Users guide
-              uses: docker://pandoc/core:2.9
+              uses: docker://pandoc/latex:2.9
               with:
                 args: >-
                   --output=UsersGuide.rtf
+                  --webtex
                   SqlScriptRunner/UsersGuide/UsersGuide.md
             - uses: actions/upload-artifact@v4
               with:
