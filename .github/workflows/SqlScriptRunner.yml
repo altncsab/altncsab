@@ -26,7 +26,7 @@ jobs:
                 name: Upload Artifact SqlScriptRunner.exe
                 path: SqlScriptRunner\SqlScriptRunner\bin\Release\SqlScriptRunner.exe
 
-    convert_via_pandoc:
+    build_user_guide:
           runs-on: ubuntu-latest
           steps:
             - name: CheckOut
@@ -45,3 +45,23 @@ jobs:
               with:
                 name: Upload Artifact UsersGuide
                 path: UsersGuide.pdf
+    
+    build_install_package:
+        runs-on: windows-latest
+        needs: [build, build_user_guide]
+        steps:
+        - name: Install NSIS
+          run: |
+            iwr -useb get.scoop.sh -outfile 'install.ps1'
+            .\install.ps1 -RunAsAdmin
+            scoop update
+            scoop bucket add extras
+            scoop install nsis
+        - name: Print NSIS version
+          run: makensis -VERSION
+        - name: Print NSIS compile flags
+          run: makensis -HDRINFO
+        - name: CheckOut
+          uses: actions/checkout@v3
+        # TODO: take over exe from build, users guide and create a new artifact
+        
