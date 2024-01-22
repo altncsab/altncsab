@@ -76,5 +76,5 @@ jobs:
         - uses: actions/upload-artifact@v4
           with:
             name: SqlScriptRunnerSetup
-            path: .\SqlScriptRunner\Installer\SqlScriptRunnerSetup.exe
+            path: .\SqlScriptRunner\Installer\SetupSqlScriptRunner_*.exe
             
