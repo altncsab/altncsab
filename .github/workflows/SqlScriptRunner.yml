@@ -39,7 +39,7 @@ jobs:
                   --to pdf
                   --output=UsersGuide.pdf
                   --standalone
-                  --workdir=./SqlScriptRunner/UsersGuide
+                  --data-dir=./SqlScriptRunner/UsersGuide
                   ./SqlScriptRunner/UsersGuide/UsersGuide.md    
             - uses: actions/upload-artifact@v4
               with:
