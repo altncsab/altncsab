@@ -35,7 +35,7 @@ jobs:
               uses: docker://pandoc/latex:2.9
               with:
                 args: >-
-                  --from markdown 
+                  --from markdown+rebase_relative_paths
                   --to pdf
                   --output=UsersGuide.pdf
                   --standalone
