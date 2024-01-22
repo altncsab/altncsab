@@ -39,7 +39,7 @@ jobs:
                   --to pdf
                   --output=UsersGuide.pdf
                   --standalone
-                  ${{ github.workspace }}/SqlScriptRunner/UsersGuide/UsersGuide.md
+                  ./SqlScriptRunner/UsersGuide/UsersGuide.md    
             - uses: actions/upload-artifact@v4
               with:
                 name: Upload Artifact UsersGuide
