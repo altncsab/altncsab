@@ -38,8 +38,8 @@ jobs:
                   --from markdown 
                   --to pdf
                   --output=UsersGuide.pdf
-                  --webtex
-                  --resource-path=SqlScriptRunner/UsersGuide/Pictures
+                  --template=paper_template.tex
+                  --resource-path=./SqlScriptRunner/UsersGuide/Pictures
                   SqlScriptRunner/UsersGuide/UsersGuide.md
             - uses: actions/upload-artifact@v4
               with:
