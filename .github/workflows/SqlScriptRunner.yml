@@ -5,6 +5,7 @@ on:
         branches: ['main']
         paths:
             - 'SqlScriptRunner/SqlScriptRunner'
+            - 'SqlScriptRunner/UsersGuide'
     
     workflow_dispatch:
 
