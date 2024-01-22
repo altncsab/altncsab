@@ -68,7 +68,7 @@ jobs:
         - uses: actions/download-artifact@master
           with:
             name: ArtifactUsersGuide
-            path: .\
+            path: SqlScriptRunner\
         
         # TODO: create a new artifact
         - name: Create install package
