@@ -72,7 +72,7 @@ It is advice to have an SQL server connection available to explore the full func
 
 When the application starting up it is scanning of the home folder of the user and looking for SQL script files (.sql). If any of the subfolder contains such a file it will be opened and all files will be shown and checked. That operation may take some time and the form does not showing up before it is finished. (considering to change this behavior)
 
-![Initial screen](Pictures/StartUpScriptRunner.png)
+![Initial screen](./Pictures/StartUpScriptRunner.png)
 
 The top section of the form contains a menu bar with file operation and database connection features. (The "Help" section does not implemented yet.)
 
@@ -100,17 +100,17 @@ Inside this menu item user can connect and disconnect to a database.
 
 The sub form "Connect To Database" will open. The user can define database server connection, If the connection should use integrated security therefore "Is Trusted". What is the initial catalog name. If the connection does not trusted the user can define SQL user name and password. Active Directory integration right now not supported.
 
-![Open Database Connection](Pictures/ConnectToDatabase.png)
+![Open Database Connection](./Pictures/ConnectToDatabase.png)
 
 User can enter the Database name or (if the access right granted on Master fot the configured user) can query available Databases for selection inside the dropdown box.
 
 If user has selected a database the "Save" button become available and the configured server and database will be visible in the main header section of the main form.
 
-![Selecting a database](Pictures/SelectingDatabase.png)
+![Selecting a database](./Pictures/SelectingDatabase.png)
 
 The header of the form after saved:
 
-![Modified form Header](Pictures/ModifiedFormHeader.png)
+![Modified form Header](./Pictures/ModifiedFormHeader.png)
 
 The button "Apply To DB" becomes also active.
 
@@ -128,7 +128,7 @@ Not implemented yet. There are two menu item planned: "About" and "Users Guide".
 
 The user can manually enter a new path:
 
-![Manual Enter Path](Pictures/ManualEnterPath.png)
+![Manual Enter Path](./Pictures/ManualEnterPath.png)
 
 In this case the system suggest valid folder names. If valid folder path entered the tree view of the folder structure will be rebuild based on the new data. This may makes the application unresponsive for several seconds.
 
@@ -142,7 +142,7 @@ When ever the application finds files with sql extension it checks them for proc
 
 The file selector tree node showing the "Root Folder" directory structure and any files has .sql extension. It is also looking inside the first level child folder if it has and .sql file inside. if it finds anything, it opens up that node and checks all the sql files inside. This mechanism is also working when user is opening up a subfolder.
 
-![SQL files selected](Pictures/SqlFliesSelected.png)
+![SQL files selected](./Pictures/SqlFliesSelected.png)
 
 By pressing the checkbox of the file item, inverts the check marking. By pressing the check box on the parent folder (any level) will copy the check status to all child elements but only of that sub folders where any of the child folder has SQL files inside.
 
@@ -150,7 +150,7 @@ Double clicking on any of the subfolder name makes the clicked item as root fold
 
 Selecting Tree node item loading and placing the file content to the text area by overwriting what ever was there before. (Save to file what ever is important to be kept!)
 
-![Selected File In Screen](Pictures/SelectedFileInScreen.png)
+![Selected File In Screen](./Pictures/SelectedFileInScreen.png)
 
 ## Button "Make Script"
 
@@ -162,7 +162,7 @@ If a database is configured this button become active. By pressing it a new sub 
 
 ## Script Execution Monitor
 
-![Script Execution Monitor](Pictures/ScriptExecutionMonitor.png)
+![Script Execution Monitor](./Pictures/ScriptExecutionMonitor.png)
 
 In the top part showing the Script Execution status. In the list view control we see all selected files as groups and "GO" sections inside. The order of the group is matching the file execution order. The column with hash (#) indicating the GO count inside the file. The Object column is the object name with the creation and the object type classification or if there is no clear script type than it is classifying the scrip section as "Script". Script classification is where certain object creation is happening. It is like Function, Procedure, Type, Table, View.
 
@@ -174,15 +174,15 @@ It is staring the Script execution sequence. The tool applying the scripts to th
 
 Ongoing Execution:
 
-![Ongoing Execution](Pictures/ExecutingSequenceOnMonitor.png)
+![Ongoing Execution](./Pictures/ExecutingSequenceOnMonitor.png)
 
 Passed Execution Log:
 
-![Passed Execution Log](Pictures/ExecutionLogPassed.png)
+![Passed Execution Log](./Pictures/ExecutionLogPassed.png)
 
 Failed Execution:
 
-![Failed Execution](Pictures/FailedExecution.png)
+![Failed Execution](./Pictures/FailedExecution.png)
 
 ### Button "Close"
 
@@ -190,7 +190,7 @@ It is closing / cancelling the ongoing script execution. it is pressed during an
 
 It looks like this:
 
-![Cancellation log](Pictures/CancellationLog.png)
+![Cancellation log](./Pictures/CancellationLog.png)
 
 The meaning of the ERROR in english "The current command resulted in a fatal error. The results (if any) cannot be used. The operation was canceled by the user." what is coming from the SQL server based on the language setting.
 
