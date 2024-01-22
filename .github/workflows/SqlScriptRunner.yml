@@ -67,8 +67,8 @@ jobs:
             path: SqlScriptRunner\SqlScriptRunner\bin\Release\
         - uses: actions/download-artifact@master
           with:
-            name: Download ArtifactUsersGuide
-            path: .\      
+            name: ArtifactUsersGuide
+            path: .\
         
         # TODO: create a new artifact
         - name: Create install package
