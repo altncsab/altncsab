@@ -38,7 +38,9 @@ jobs:
                   --from markdown 
                   --to pdf
                   --output=UsersGuide.pdf
-                  --resource-path=./SqlScriptRunner/UsersGuide/Pictures
+                  --standalone
+                  --resource-path=SqlScriptRunner/UsersGuide/Pictures
+                  --data-dir=SqlScriptRunner/UsersGuide
                   SqlScriptRunner/UsersGuide/UsersGuide.md
             - uses: actions/upload-artifact@v4
               with:
