@@ -31,6 +31,8 @@ Date|Version|Description
     - [Menu "Connect To DB" (Alt+C C)](#menu-connect-to-db-altc-c)
     - [Menu "Disconnect" (Alt+C D)](#menu-disconnect-altc-d)
   - [Help (Alt+H)](#help-alth)
+    - [Menu "About" (Alt+H A)](#menu-about-alth-a)
+    - ["Users Guide" (F1 or Alt+H G)](#users-guide-f1-or-alth-g)
   - [Root folder selector](#root-folder-selector)
   - [File selector tree node](#file-selector-tree-node)
   - [Button "Make Script"](#button-make-script)
@@ -122,7 +124,17 @@ It is clearing the configured database connection from the application. The data
 
 ## Help (Alt+H)
 
-Not implemented yet. There are two menu item planned: "About" and "Users Guide".
+It contains the about box and the users guide.
+
+### Menu "About" (Alt+H A)
+
+Showing the application name, version and author information.
+
+![About](./Pictures/About.png)
+
+### "Users Guide" (F1 or Alt+H G)
+
+Loading and showing the users guide. It is a web component. Ctr+F is opening a search window. Links are clickable. Loading the users guide from the application is a bit time consuming. The form showing message: "Loading document. Please wait!"
 
 ## Root folder selector
 

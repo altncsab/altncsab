@@ -659,6 +659,7 @@ namespace SqlScriptRunner
                             userGuideForm.Show(this);
                         }
                     }
+                    userGuideForm?.Focus();
                 }
             }
             catch (Exception ex)
