@@ -36,15 +36,15 @@ jobs:
               with:
                 args: >-
                   --from markdown+rebase_relative_paths
-                  --to pdf
-                  --output=UsersGuide.pdf
+                  --to html
+                  --output=UsersGuide.html
                   --standalone
                   --data-dir=./SqlScriptRunner/UsersGuide
                   ./SqlScriptRunner/UsersGuide/UsersGuide.md    
             - uses: actions/upload-artifact@v4
               with:
                 name: ArtifactUsersGuide
-                path: UsersGuide.pdf
+                path: UsersGuide.html
     
     build_install_package:
         runs-on: windows-latest
