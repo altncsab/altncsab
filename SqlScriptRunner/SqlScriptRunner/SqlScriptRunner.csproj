@@ -66,6 +66,12 @@
     <Compile Include="Forms\ScriptExecutionMonitorForm.Designer.cs">
       <DependentUpon>ScriptExecutionMonitorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\UsersGuideForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UsersGuideForm.Designer.cs">
+      <DependentUpon>UsersGuideForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Logger\LogLevel.cs" />
     <Compile Include="ScriptHandler\ExecutionStatusEnum.cs" />
     <Compile Include="ScriptHandler\ObjectTypeNameEnum.cs" />
@@ -86,6 +92,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ScriptExecutionMonitorForm.resx">
       <DependentUpon>ScriptExecutionMonitorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UsersGuideForm.resx">
+      <DependentUpon>UsersGuideForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
