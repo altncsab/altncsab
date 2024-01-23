@@ -29,6 +29,8 @@ namespace SqlScriptRunner
         internal DbContext dbContext;
         private StatusCallBackDelegate scriptStatusCallBack;
         private CancellationTokenSource cancellationTokenSource;
+        private UsersGuideForm userGuideForm;
+
         public SqlScriptRunnerMain()
         {
             InitializeComponent();
@@ -634,6 +636,50 @@ namespace SqlScriptRunner
                 richTextBoxGeneratedContent.AppendText($"{DateTime.Now:u}: {str}\n",textColor);
                 richTextBoxGeneratedContent.ScrollToCaret();
                 richTextBoxGeneratedContent.ForeColor = Color.Black;
+            }
+        }
+
+        private void usersGuideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UsersGuide.html");
+                if (File.Exists(path))
+                {
+                    if (userGuideForm == null)
+                    {
+                        userGuideForm = new UsersGuideForm(path);
+                        userGuideForm.Show(this);
+                    }
+                    else
+                    {
+                        if (userGuideForm.IsDisposed)
+                        {
+                            userGuideForm = new UsersGuideForm(path);
+                            userGuideForm.Show(this);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                this.ShowErrorMessage(ex);
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string message = string.Format("{0} v.{1}\nCopyright (c) 2024 Csaba Nagy\nMIT license"
+                    , Application.ProductName
+                    , Application.ProductVersion);
+                MessageBox.Show(this,message, "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                this.ShowErrorMessage(ex);
             }
         }
     }

@@ -35,7 +35,7 @@ Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File "..\SqlScriptRunner\bin\Release\${PRODUCT_NAME}.exe"
-  File "..\UsersGuide.pdf"
+  File "..\UsersGuide.html"
 ; Note: my system has a config template, which should manually be edited. This is a nice trick to save your username/password somewhere,
 ; but you can entirely skip this by deleting the following line. 
  ; File /oname=SqlScriptRunner.exe.config "App.config.template"
@@ -77,7 +77,7 @@ FunctionEnd
 ; is company name ZWare) will not be removed if there is any other application installed in it.
 Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.exe"
-  Delete "$INSTDIR\UsersGuide.pdf"
+  Delete "$INSTDIR\UsersGuide.html"
   Delete "$INSTDIR\uninst.exe"
 
   RMDir "$INSTDIR"

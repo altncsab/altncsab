@@ -128,14 +128,17 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // usersGuideToolStripMenuItem
             // 
             this.usersGuideToolStripMenuItem.Name = "usersGuideToolStripMenuItem";
-            this.usersGuideToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.usersGuideToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
+            this.usersGuideToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.usersGuideToolStripMenuItem.Text = "Users Guide";
+            this.usersGuideToolStripMenuItem.Click += new System.EventHandler(this.usersGuideToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
