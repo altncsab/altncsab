@@ -2,7 +2,7 @@ name: SqlScriptRunner
 
 on:
     pull_request:
-        branches: ['main']
+        branches: ['main', 'release/*']
         types: [closed]
         paths:
             - 'SqlScriptRunner/SqlScriptRunner/*'
