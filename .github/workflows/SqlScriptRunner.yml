@@ -3,9 +3,10 @@ name: SqlScriptRunner
 on:
     pull_request:
         branches: ['main']
+        types: [closed]
         paths:
-            - 'SqlScriptRunner/SqlScriptRunner'
-            - 'SqlScriptRunner/UsersGuide'
+            - 'SqlScriptRunner/SqlScriptRunner/*'
+            - 'SqlScriptRunner/UsersGuide/*'
     
     workflow_dispatch:
 
