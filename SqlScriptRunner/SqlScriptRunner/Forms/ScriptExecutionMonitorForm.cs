@@ -79,6 +79,7 @@ namespace SqlScriptRunner.Forms
                 if (ScriptLoader.ScriptFileList.Any(s => !s.ScriptSections.Any(ss => ss.Status == null || ss.Status == ExecutionStatusEnum.Running)))
                 {
                     buttonStart.Enabled = true;
+                    checkBoxAllowTransaction.Enabled = true;
                     labelStatusText.Text = "Completed";
                 }
                 else
@@ -147,7 +148,21 @@ namespace SqlScriptRunner.Forms
             {
                 commandAction?.Invoke(ScriptLoader, "Start");
                 buttonStart.Enabled = false;
+                checkBoxAllowTransaction.Enabled = false; // do not change the transaction state when it is running
                 labelStatusText.Text = "Started";
+            }
+            catch (Exception ex)
+            {
+
+                this.ShowErrorMessage(ex);
+            }
+        }
+
+        private void checkBoxAllowTransaction_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                commandAction?.Invoke(ScriptLoader, $"Transaction:{checkBoxAllowTransaction.Checked}");
             }
             catch (Exception ex)
             {

@@ -32,23 +32,28 @@
             this.labelStatusText = new System.Windows.Forms.Label();
             this.labelHeader = new System.Windows.Forms.Label();
             this.panelFooter = new System.Windows.Forms.Panel();
-            this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonStart = new System.Windows.Forms.Button();
+            this.buttonCancel = new System.Windows.Forms.Button();
             this.listViewExecution = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.panelOptions = new System.Windows.Forms.Panel();
+            this.panelStatus = new System.Windows.Forms.Panel();
+            this.checkBoxAllowTransaction = new System.Windows.Forms.CheckBox();
             this.panelHeader.SuspendLayout();
             this.panelFooter.SuspendLayout();
+            this.panelOptions.SuspendLayout();
+            this.panelStatus.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelHeader
             // 
-            this.panelHeader.Controls.Add(this.labelStatusText);
-            this.panelHeader.Controls.Add(this.labelHeader);
+            this.panelHeader.Controls.Add(this.panelOptions);
+            this.panelHeader.Controls.Add(this.panelStatus);
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelHeader.Location = new System.Drawing.Point(0, 0);
             this.panelHeader.Name = "panelHeader";
-            this.panelHeader.Size = new System.Drawing.Size(288, 32);
+            this.panelHeader.Size = new System.Drawing.Size(288, 50);
             this.panelHeader.TabIndex = 1;
             // 
             // labelStatusText
@@ -56,7 +61,7 @@
             this.labelStatusText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelStatusText.Location = new System.Drawing.Point(120, 0);
             this.labelStatusText.Name = "labelStatusText";
-            this.labelStatusText.Size = new System.Drawing.Size(168, 32);
+            this.labelStatusText.Size = new System.Drawing.Size(168, 18);
             this.labelStatusText.TabIndex = 1;
             this.labelStatusText.Text = "Not Started";
             this.labelStatusText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -66,7 +71,7 @@
             this.labelHeader.Dock = System.Windows.Forms.DockStyle.Left;
             this.labelHeader.Location = new System.Drawing.Point(0, 0);
             this.labelHeader.Name = "labelHeader";
-            this.labelHeader.Size = new System.Drawing.Size(120, 32);
+            this.labelHeader.Size = new System.Drawing.Size(120, 18);
             this.labelHeader.TabIndex = 0;
             this.labelHeader.Text = "Script Execution Status:";
             this.labelHeader.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -76,10 +81,21 @@
             this.panelFooter.Controls.Add(this.buttonStart);
             this.panelFooter.Controls.Add(this.buttonCancel);
             this.panelFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelFooter.Location = new System.Drawing.Point(0, 447);
+            this.panelFooter.Location = new System.Drawing.Point(0, 511);
             this.panelFooter.Name = "panelFooter";
             this.panelFooter.Size = new System.Drawing.Size(288, 31);
             this.panelFooter.TabIndex = 1;
+            // 
+            // buttonStart
+            // 
+            this.buttonStart.Dock = System.Windows.Forms.DockStyle.Right;
+            this.buttonStart.Location = new System.Drawing.Point(166, 0);
+            this.buttonStart.Name = "buttonStart";
+            this.buttonStart.Size = new System.Drawing.Size(61, 31);
+            this.buttonStart.TabIndex = 0;
+            this.buttonStart.Text = "Start";
+            this.buttonStart.UseVisualStyleBackColor = true;
+            this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
             // buttonCancel
             // 
@@ -93,17 +109,6 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // buttonStart
-            // 
-            this.buttonStart.Dock = System.Windows.Forms.DockStyle.Right;
-            this.buttonStart.Location = new System.Drawing.Point(166, 0);
-            this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(61, 31);
-            this.buttonStart.TabIndex = 0;
-            this.buttonStart.Text = "Start";
-            this.buttonStart.UseVisualStyleBackColor = true;
-            this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
-            // 
             // listViewExecution
             // 
             this.listViewExecution.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -113,11 +118,11 @@
             this.listViewExecution.FullRowSelect = true;
             this.listViewExecution.GridLines = true;
             this.listViewExecution.HideSelection = false;
-            this.listViewExecution.Location = new System.Drawing.Point(0, 32);
+            this.listViewExecution.Location = new System.Drawing.Point(0, 50);
             this.listViewExecution.MultiSelect = false;
             this.listViewExecution.Name = "listViewExecution";
             this.listViewExecution.ShowItemToolTips = true;
-            this.listViewExecution.Size = new System.Drawing.Size(288, 415);
+            this.listViewExecution.Size = new System.Drawing.Size(288, 461);
             this.listViewExecution.TabIndex = 2;
             this.listViewExecution.UseCompatibleStateImageBehavior = false;
             this.listViewExecution.View = System.Windows.Forms.View.Details;
@@ -130,13 +135,47 @@
             // 
             this.columnHeader2.Text = "Object";
             // 
+            // panelOptions
+            // 
+            this.panelOptions.Controls.Add(this.checkBoxAllowTransaction);
+            this.panelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelOptions.Location = new System.Drawing.Point(0, 0);
+            this.panelOptions.Name = "panelOptions";
+            this.panelOptions.Size = new System.Drawing.Size(288, 32);
+            this.panelOptions.TabIndex = 2;
+            // 
+            // panelStatus
+            // 
+            this.panelStatus.Controls.Add(this.labelStatusText);
+            this.panelStatus.Controls.Add(this.labelHeader);
+            this.panelStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelStatus.Location = new System.Drawing.Point(0, 32);
+            this.panelStatus.Name = "panelStatus";
+            this.panelStatus.Size = new System.Drawing.Size(288, 18);
+            this.panelStatus.TabIndex = 3;
+            // 
+            // checkBoxAllowTransaction
+            // 
+            this.checkBoxAllowTransaction.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxAllowTransaction.Checked = true;
+            this.checkBoxAllowTransaction.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxAllowTransaction.Dock = System.Windows.Forms.DockStyle.Top;
+            this.checkBoxAllowTransaction.Location = new System.Drawing.Point(0, 0);
+            this.checkBoxAllowTransaction.Name = "checkBoxAllowTransaction";
+            this.checkBoxAllowTransaction.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
+            this.checkBoxAllowTransaction.Size = new System.Drawing.Size(288, 16);
+            this.checkBoxAllowTransaction.TabIndex = 0;
+            this.checkBoxAllowTransaction.Text = "Allow Transaction";
+            this.checkBoxAllowTransaction.UseVisualStyleBackColor = true;
+            this.checkBoxAllowTransaction.CheckedChanged += new System.EventHandler(this.checkBoxAllowTransaction_CheckedChanged);
+            // 
             // ScriptExecutionMonitorForm
             // 
             this.AcceptButton = this.buttonStart;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(288, 478);
+            this.ClientSize = new System.Drawing.Size(288, 542);
             this.Controls.Add(this.listViewExecution);
             this.Controls.Add(this.panelFooter);
             this.Controls.Add(this.panelHeader);
@@ -149,6 +188,8 @@
             this.Load += new System.EventHandler(this.ScriptExecutionMonitorForm_Load);
             this.panelHeader.ResumeLayout(false);
             this.panelFooter.ResumeLayout(false);
+            this.panelOptions.ResumeLayout(false);
+            this.panelStatus.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -164,5 +205,8 @@
         private System.Windows.Forms.Label labelStatusText;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.Panel panelOptions;
+        private System.Windows.Forms.Panel panelStatus;
+        private System.Windows.Forms.CheckBox checkBoxAllowTransaction;
     }
 }

@@ -27,6 +27,7 @@ namespace SqlScriptRunner.ScriptHandler
 
         public Task LoadingTask { get; set; }
         public List<Script> ScriptFileList => scriptFileList;
+        public bool WithTransaction { get; set; }
 
         private Action<string, LogLevelEnum?> LogAction;
         internal delegate void StatusCallBackDelegate(ScriptSection script);
@@ -36,6 +37,7 @@ namespace SqlScriptRunner.ScriptHandler
             // scriptFileList = scriptFiles;
             scriptFileList = new List<Script>();
             LogAction = logAction;
+            WithTransaction = true;
             LoadingTask = Task.Run(() =>
             {
                 var result = Parallel.ForEach(scriptFiles, scriptPath =>
@@ -106,7 +108,7 @@ namespace SqlScriptRunner.ScriptHandler
             return Task.Run(() => 
             {                
                 IEnumerable<ScriptSection> scriptSequence = ScriptExecutionSequence();
-                var scriptApplyer = new ApplyScript() { WithTransaction = true, LogFunction = ExecutionLogAction };
+                var scriptApplyer = new ApplyScript() { WithTransaction = WithTransaction, LogFunction = ExecutionLogAction };
                 ScriptSection currScriptSection = null;
                 try
                 {
@@ -133,10 +135,13 @@ namespace SqlScriptRunner.ScriptHandler
                             currScriptSection.MessageLog?.Add(message);
                             ExecutionLogAction?.Invoke(message,LogLevelEnum.Error);
                             currScriptSection.MessageLog?.AddRange(scriptApplyer.Errors.Cast<SqlError>().Select(se => $"ERROR:{se.Message}"));
-                            scriptApplyer.RollBackTransaction();
-                            message = "Rolling back all actions";
-                            currScriptSection.MessageLog?.Add(message);
-                            ExecutionLogAction?.Invoke(message, LogLevelEnum.Warn);
+                            if (WithTransaction)
+                            {
+                                scriptApplyer.RollBackTransaction();
+                                message = "Rolling back all actions";
+                                currScriptSection.MessageLog?.Add(message);
+                                ExecutionLogAction?.Invoke(message, LogLevelEnum.Warn);
+                            }
                             statusCallBack.Invoke(currScriptSection);
                             break;
                         }
