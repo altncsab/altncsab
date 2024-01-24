@@ -580,18 +580,23 @@ namespace SqlScriptRunner
 
         private void DatabaseInsertionCommands(ScriptLoader scriptLoader, string command)
         {
-            // TODO: implement Start, Cancel commands
-            switch (command)
+            //implement Start, Cancel commands, Setting settings separated with (:) colon.
+            var subCommand = command.Split(':');
+            
+            switch (subCommand[0])
             {
                 case "Start":
                     // TODO: Start the asynchronous procedure to apply DB scripts into database. Use Cancellation token.
                     richTextBoxGeneratedContent.Clear();
-                    ExecutionLogAction("Start executing sequence", LogLevelEnum.Info);
+                    ExecutionLogAction($"Start executing sequence with{(scriptLoader.WithTransaction ? "" : "out")} transaction", LogLevelEnum.Info);
                     scriptLoader.ApplyScriptsToDatabase(dbContext, ExecutionLogAction, scriptStatusCallBack, cancellationTokenSource.Token);
                     break;
                 case "Cancel":
                     // TODO: Cancel and roll back
                     cancellationTokenSource.Cancel(throwOnFirstException: true);
+                    break;
+                case "Transaction":
+                    scriptLoader.WithTransaction = subCommand.Length > 1 ? bool.Parse(subCommand[1]) : true;
                     break;
                 default:
                     break;

@@ -12,6 +12,7 @@ Project page on Github: [github.com/altncsab](https://github.com/altncsab/altncs
 
 Date|Version|Description
 -|-|-
+2024.01.24|1.0.1-alpha01|Allow switch on / off transactions during script applying
 2024.01.18|1.0.0.0|Adding Users guide
 2024.01.16|1.0.0.0|Initial release
 
@@ -38,6 +39,7 @@ Date|Version|Description
   - [Button "Make Script"](#button-make-script)
   - [Button "Apply To DB"](#button-apply-to-db)
   - [Script Execution Monitor](#script-execution-monitor)
+    - [Checkbox "Allow Transaction"](#checkbox-allow-transaction)
     - [Button "Start"](#button-start)
     - [Button "Close"](#button-close)
   - [Closure and usage](#closure-and-usage)
@@ -176,9 +178,13 @@ If a database is configured this button become active. By pressing it a new sub 
 
 ![Script Execution Monitor](./Pictures/ScriptExecutionMonitor.png)
 
-In the top part showing the Script Execution status. In the list view control we see all selected files as groups and "GO" sections inside. The order of the group is matching the file execution order. The column with hash (#) indicating the GO count inside the file. The Object column is the object name with the creation and the object type classification or if there is no clear script type than it is classifying the scrip section as "Script". Script classification is where certain object creation is happening. It is like Function, Procedure, Type, Table, View.
+In the top part showing up some settings and the Script Execution status. In the list view control we see all selected files as groups and "GO" sections inside. The order of the group is matching the file execution order. The column with hash (#) indicating the GO count inside the file. The Object column is the object name with the creation and the object type classification or if there is no clear script type than it is classifying the scrip section as "Script". Script classification is where certain object creation is happening. It is like Function, Procedure, Type, Table, View.
 
-Under the form there are 2 buttons:
+### Checkbox "Allow Transaction"
+
+This setting determines if the application should start a transaction when it starts to deploy the configured script sections.
+
+Default value: checked
 
 ### Button "Start"
 
@@ -212,7 +218,6 @@ The application is build for demonstration purpose. There is no guarantee it is 
 
 ## Planned features in the future
 
-- Enable / Disable Transaction
 - Auto script drop statement if user asking for it.
 - Comment analysis result to the header of generated script (Like missing object or risk of failure.)
 - Checkbox to include / exclude script section in Execution monitor

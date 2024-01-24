@@ -1,6 +1,6 @@
 ; Main constants - define following constants as you want them displayed in your installation wizard
 !define PRODUCT_NAME "SqlScriptRunner"
-!define PRODUCT_VERSION "1.0.0.0"
+!define PRODUCT_VERSION "1.0.1-alpha01"
 !define PRODUCT_PUBLISHER "altncsab"
 !define PRODUCT_WEB_SITE "https://github.com/altncsab/altncsab"
 

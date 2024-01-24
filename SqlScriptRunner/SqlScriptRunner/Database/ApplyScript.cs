@@ -77,6 +77,7 @@ namespace SqlScriptRunner.Database
                 LogFunction?.Invoke($"ERROR: {ex.Message}", Logger.LogLevelEnum.Error);
                 Messages.Add(ex.Message);
             }
+            // there was an open transaction from an earlier call what needs to be committed
             if (!WithTransaction && Transaction != null)
             {
                 Transaction.Commit();
