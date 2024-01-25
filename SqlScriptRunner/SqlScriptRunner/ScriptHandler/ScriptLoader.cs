@@ -28,6 +28,7 @@ namespace SqlScriptRunner.ScriptHandler
         public Task LoadingTask { get; set; }
         public List<Script> ScriptFileList => scriptFileList;
         public bool WithTransaction { get; set; }
+        public bool IsCompleted => !scriptSections?.Any(ss => ss.Status == null || ss.Status == ExecutionStatusEnum.Running) ?? true;
 
         private Action<string, LogLevelEnum?> LogAction;
         internal delegate void StatusCallBackDelegate(ScriptSection script);

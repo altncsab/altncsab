@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.panelHeader = new System.Windows.Forms.Panel();
+            this.panelOptions = new System.Windows.Forms.Panel();
+            this.checkBoxAllowTransaction = new System.Windows.Forms.CheckBox();
+            this.panelStatus = new System.Windows.Forms.Panel();
             this.labelStatusText = new System.Windows.Forms.Label();
             this.labelHeader = new System.Windows.Forms.Label();
             this.panelFooter = new System.Windows.Forms.Panel();
@@ -37,31 +40,61 @@
             this.listViewExecution = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.panelOptions = new System.Windows.Forms.Panel();
-            this.panelStatus = new System.Windows.Forms.Panel();
-            this.checkBoxAllowTransaction = new System.Windows.Forms.CheckBox();
             this.panelHeader.SuspendLayout();
-            this.panelFooter.SuspendLayout();
             this.panelOptions.SuspendLayout();
             this.panelStatus.SuspendLayout();
+            this.panelFooter.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelHeader
             // 
             this.panelHeader.Controls.Add(this.panelOptions);
-            this.panelHeader.Controls.Add(this.panelStatus);
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelHeader.Location = new System.Drawing.Point(0, 0);
             this.panelHeader.Name = "panelHeader";
             this.panelHeader.Size = new System.Drawing.Size(288, 50);
             this.panelHeader.TabIndex = 1;
             // 
+            // panelOptions
+            // 
+            this.panelOptions.Controls.Add(this.checkBoxAllowTransaction);
+            this.panelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelOptions.Location = new System.Drawing.Point(0, 0);
+            this.panelOptions.Name = "panelOptions";
+            this.panelOptions.Size = new System.Drawing.Size(288, 50);
+            this.panelOptions.TabIndex = 2;
+            // 
+            // checkBoxAllowTransaction
+            // 
+            this.checkBoxAllowTransaction.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxAllowTransaction.Checked = true;
+            this.checkBoxAllowTransaction.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxAllowTransaction.Dock = System.Windows.Forms.DockStyle.Top;
+            this.checkBoxAllowTransaction.Location = new System.Drawing.Point(0, 0);
+            this.checkBoxAllowTransaction.Name = "checkBoxAllowTransaction";
+            this.checkBoxAllowTransaction.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
+            this.checkBoxAllowTransaction.Size = new System.Drawing.Size(288, 16);
+            this.checkBoxAllowTransaction.TabIndex = 0;
+            this.checkBoxAllowTransaction.Text = "Allow Transaction";
+            this.checkBoxAllowTransaction.UseVisualStyleBackColor = true;
+            this.checkBoxAllowTransaction.CheckedChanged += new System.EventHandler(this.checkBoxAllowTransaction_CheckedChanged);
+            // 
+            // panelStatus
+            // 
+            this.panelStatus.Controls.Add(this.labelStatusText);
+            this.panelStatus.Controls.Add(this.labelHeader);
+            this.panelStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelStatus.Location = new System.Drawing.Point(0, 0);
+            this.panelStatus.Name = "panelStatus";
+            this.panelStatus.Size = new System.Drawing.Size(166, 31);
+            this.panelStatus.TabIndex = 3;
+            // 
             // labelStatusText
             // 
             this.labelStatusText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelStatusText.Location = new System.Drawing.Point(120, 0);
+            this.labelStatusText.Location = new System.Drawing.Point(94, 0);
             this.labelStatusText.Name = "labelStatusText";
-            this.labelStatusText.Size = new System.Drawing.Size(168, 18);
+            this.labelStatusText.Size = new System.Drawing.Size(72, 31);
             this.labelStatusText.TabIndex = 1;
             this.labelStatusText.Text = "Not Started";
             this.labelStatusText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -71,13 +104,14 @@
             this.labelHeader.Dock = System.Windows.Forms.DockStyle.Left;
             this.labelHeader.Location = new System.Drawing.Point(0, 0);
             this.labelHeader.Name = "labelHeader";
-            this.labelHeader.Size = new System.Drawing.Size(120, 18);
+            this.labelHeader.Size = new System.Drawing.Size(94, 31);
             this.labelHeader.TabIndex = 0;
-            this.labelHeader.Text = "Script Execution Status:";
+            this.labelHeader.Text = "Execution Status:";
             this.labelHeader.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // panelFooter
             // 
+            this.panelFooter.Controls.Add(this.panelStatus);
             this.panelFooter.Controls.Add(this.buttonStart);
             this.panelFooter.Controls.Add(this.buttonCancel);
             this.panelFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -135,40 +169,6 @@
             // 
             this.columnHeader2.Text = "Object";
             // 
-            // panelOptions
-            // 
-            this.panelOptions.Controls.Add(this.checkBoxAllowTransaction);
-            this.panelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelOptions.Location = new System.Drawing.Point(0, 0);
-            this.panelOptions.Name = "panelOptions";
-            this.panelOptions.Size = new System.Drawing.Size(288, 32);
-            this.panelOptions.TabIndex = 2;
-            // 
-            // panelStatus
-            // 
-            this.panelStatus.Controls.Add(this.labelStatusText);
-            this.panelStatus.Controls.Add(this.labelHeader);
-            this.panelStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelStatus.Location = new System.Drawing.Point(0, 32);
-            this.panelStatus.Name = "panelStatus";
-            this.panelStatus.Size = new System.Drawing.Size(288, 18);
-            this.panelStatus.TabIndex = 3;
-            // 
-            // checkBoxAllowTransaction
-            // 
-            this.checkBoxAllowTransaction.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.checkBoxAllowTransaction.Checked = true;
-            this.checkBoxAllowTransaction.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxAllowTransaction.Dock = System.Windows.Forms.DockStyle.Top;
-            this.checkBoxAllowTransaction.Location = new System.Drawing.Point(0, 0);
-            this.checkBoxAllowTransaction.Name = "checkBoxAllowTransaction";
-            this.checkBoxAllowTransaction.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.checkBoxAllowTransaction.Size = new System.Drawing.Size(288, 16);
-            this.checkBoxAllowTransaction.TabIndex = 0;
-            this.checkBoxAllowTransaction.Text = "Allow Transaction";
-            this.checkBoxAllowTransaction.UseVisualStyleBackColor = true;
-            this.checkBoxAllowTransaction.CheckedChanged += new System.EventHandler(this.checkBoxAllowTransaction_CheckedChanged);
-            // 
             // ScriptExecutionMonitorForm
             // 
             this.AcceptButton = this.buttonStart;
@@ -187,9 +187,9 @@
             this.Text = "Script Execution Monitor";
             this.Load += new System.EventHandler(this.ScriptExecutionMonitorForm_Load);
             this.panelHeader.ResumeLayout(false);
-            this.panelFooter.ResumeLayout(false);
             this.panelOptions.ResumeLayout(false);
             this.panelStatus.ResumeLayout(false);
+            this.panelFooter.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
