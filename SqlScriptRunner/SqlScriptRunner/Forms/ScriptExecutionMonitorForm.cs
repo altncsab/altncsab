@@ -31,7 +31,6 @@ namespace SqlScriptRunner.Forms
             ScriptLoader = scriptLoader;
             ScriptList = scriptLoader.SortedFileList().ToList();
         }
-
         public void StatusUpdate(ScriptSection scriptSection)
         {
             if (this.InvokeRequired)
@@ -76,7 +75,7 @@ namespace SqlScriptRunner.Forms
                     item.EnsureVisible();
                 }
                 // if all script has a status than it is completed
-                if (ScriptLoader.ScriptFileList.Any(s => !s.ScriptSections.Any(ss => ss.Status == null || ss.Status == ExecutionStatusEnum.Running)))
+                if (ScriptLoader.IsCompleted)
                 {
                     buttonStart.Enabled = true;
                     checkBoxAllowTransaction.Enabled = true;
