@@ -26,10 +26,15 @@ namespace SqlScriptRunner
         private bool checkingTreeNode;
         private bool isInitializing;
         private delegate void LogWriterDelegate(string message, LogLevelEnum? logLevel);
+        private delegate void SubFoldersReadyDelegate(TreeNode tootNode ,TreeNode targetRootNode = null);
+        private delegate void CopyToTreeViewDelegate(TreeNode rootNode, TreeNode targetRootNode = null);
         internal DbContext dbContext;
         private StatusCallBackDelegate scriptStatusCallBack;
-        private CancellationTokenSource cancellationTokenSource;
+        private CancellationTokenSource cancellationTokenSourceSql;
+        private CancellationTokenSource cancellationTokenSourceTreeNodes;
+        private Task TreeNodeTask;
         private UsersGuideForm userGuideForm;
+        private TreeNode asyncRoot;
 
         public SqlScriptRunnerMain()
         {
@@ -88,16 +93,74 @@ namespace SqlScriptRunner
         {
             buttonUp.Enabled = lastUsedFolderName.Split(Path.DirectorySeparatorChar).Length > 1;
         }
-        private void PopulateSubFolders()
+        private Task PopulateSubFolders(TreeNode rootNode = null)
         {
-            AllowTreeNodeEvents(false);
             treeViewFileStructure.BeginUpdate();
-            treeViewFileStructure.Nodes.Clear();
-            PopulateSubFolders(lastUsedFolderName, null, 0);
-            AllowTreeNodeEvents();
+            TreeNode backUp = new TreeNode();
+            if (rootNode == null)
+            {
+                backUp.Nodes.AddRange(
+                        treeViewFileStructure.Nodes.Cast<TreeNode>().Select(tn => (TreeNode)tn.Clone()).ToArray()
+                    );
+                //CopyToTreeView(treeViewFileStructure.Nodes, backUp);
+                treeViewFileStructure.Nodes.Clear();
+                treeViewFileStructure.Nodes.Add("Initializing folder structure...");
+            }
+            else
+            {
+                CopyToTreeView(rootNode, backUp); 
+                rootNode.Nodes.Clear();
+                rootNode.Nodes.Add("Loading folders...");
+            }
             treeViewFileStructure.EndUpdate();
+            asyncRoot = new TreeNode();
+            if(cancellationTokenSourceTreeNodes != null && TreeNodeTask != null)
+            {
+                cancellationTokenSourceTreeNodes.Cancel(throwOnFirstException: true);
+                // It could happen the application is invoking to Form thread. It could result deadlock situation.
+                // That is the reason for DoEvent and timeout for Wait.
+                Application.DoEvents();
+                TreeNodeTask.Wait(TimeSpan.FromMilliseconds(1000));
+            }
+            cancellationTokenSourceTreeNodes = new CancellationTokenSource();
+            TreeNodeTask = Task.Run(() =>
+            {
+                try
+                {
+                    var pathToLookIn = Path.Combine(lastUsedFolderName, (rootNode?.TreeView != null ? rootNode?.FullPath : ""));
+                    PopulateSubFolders(pathToLookIn, asyncRoot, 0);
+                    cancellationTokenSourceTreeNodes?.Token.ThrowIfCancellationRequested();
+                    SubFoldersReady(asyncRoot, rootNode);
+                }
+                catch (OperationCanceledException)
+                {
+                    CopyToTreeView(backUp, rootNode);
+                }
+                finally
+                {
+                    cancellationTokenSourceTreeNodes = null;
+                }
+            }, cancellationTokenSourceTreeNodes.Token);
+            return TreeNodeTask;
         }
+        private void SubFoldersReady(TreeNode rootNode, TreeNode targetRootNode = null)
+        {
+            if (InvokeRequired)
+            {
+                var op = new SubFoldersReadyDelegate(SubFoldersReady);
+                cancellationTokenSourceTreeNodes?.Token.ThrowIfCancellationRequested();
+                Invoke(op, rootNode, targetRootNode);
+            }
+            else
+            {
+                AllowTreeNodeEvents(false);
+                treeViewFileStructure.BeginUpdate();
+                CopyToTreeView(rootNode, targetRootNode);
+                treeViewFileStructure.EndUpdate();
+                AllowTreeNodeEvents();
 
+            }
+        }
         // This procedure could take a bit longer...
         private void PopulateSubFolders(string lastRootFolder, TreeNode rootNode, int level)
         {
@@ -107,6 +170,7 @@ namespace SqlScriptRunner
                 try
                 {
                     var files = Directory.GetFiles(lastRootFolder, "*.sql").OrderBy(n => n).ToArray();
+                    cancellationTokenSourceTreeNodes?.Token.ThrowIfCancellationRequested();
                     foreach (var file in files)
                     {
                         var treeNode = new TreeNode(Path.GetFileName(file)) { Tag = file, Checked=true };
@@ -123,6 +187,7 @@ namespace SqlScriptRunner
                 try
                 {
                     var folders = Directory.GetDirectories(lastRootFolder).OrderBy(n => n).ToArray();
+                    cancellationTokenSourceTreeNodes?.Token.ThrowIfCancellationRequested();
                     foreach (var folder in folders)
                     {
                         var folderNode = new TreeNode(Path.GetFileName(folder));
@@ -146,6 +211,44 @@ namespace SqlScriptRunner
             }
         }
 
+        private void CopyToTreeView(TreeNode rootNode, TreeNode targetRootNode = null)
+        {
+            if ((targetRootNode == null && treeViewFileStructure.InvokeRequired) ||
+                (targetRootNode != null && (targetRootNode.TreeView?.InvokeRequired ?? false)))
+            {
+                var op = new CopyToTreeViewDelegate(CopyToTreeView);
+                _ = Invoke(op, rootNode, targetRootNode);
+            }
+            else
+            {
+                // we need only children
+                if (rootNode != null)
+                {
+                    TreeNodeCollection nodeCollection;
+                    if (targetRootNode == null)
+                    {
+                        nodeCollection = treeViewFileStructure.Nodes;
+                    }
+                    else
+                    {
+                        nodeCollection = targetRootNode.Nodes;
+                    }
+                    nodeCollection.Clear();
+                    nodeCollection
+                        .AddRange(
+                            rootNode.Nodes.Cast<TreeNode>().Select(tn => 
+                            {
+                                var newNode = (TreeNode)tn.Clone();
+                                if (tn.IsExpanded)
+                                {
+                                    newNode.Expand();
+                                }
+                                return newNode; 
+                            }).ToArray()
+                        );
+                }
+            }
+        }
         private void AppendToRootNode(TreeNode rootNode, TreeNode treeNode)
         {
             if (rootNode == null)
@@ -186,7 +289,6 @@ namespace SqlScriptRunner
                 {
                     if (e.Node?.Tag == null)
                     {
-                        // TODO: schedule a reinitialization with the selected node
                         textBoxRootFolder.Text = Path.Combine(lastUsedFolderName, e.Node.FullPath);
                     }
                     else
@@ -337,8 +439,8 @@ namespace SqlScriptRunner
                 AllowTreeNodeEvents(false);
                 checkingTreeNode = true;
                 treeViewFileStructure.BeginUpdate();
-                e.Node.Nodes.Clear();
-                PopulateSubFolders(Path.Combine(lastUsedFolderName, e.Node.FullPath), e.Node, 0);
+                e.Node.Expand();
+                PopulateSubFolders(e.Node);
             }
             catch (Exception ex)
             {
@@ -348,10 +450,8 @@ namespace SqlScriptRunner
             finally
             {
                 treeViewFileStructure.EndUpdate();
-                // Application.DoEvents();
                 AllowTreeNodeEvents();
                 checkingTreeNode = false;
-                // expandingTreeNode = false;
             }
         }
 
@@ -432,7 +532,11 @@ namespace SqlScriptRunner
             try
             {
                 var upperFolder = Path.GetDirectoryName(lastUsedFolderName);
-                textBoxRootFolder.Text = upperFolder;
+                // do not remove the last part of the path.
+                if (!string.IsNullOrWhiteSpace(upperFolder))
+                {
+                    textBoxRootFolder.Text = upperFolder;
+                }
             }
             catch (Exception ex)
             {
@@ -561,7 +665,7 @@ namespace SqlScriptRunner
                 if (scriptLoader != null)
                 {
                     var monitor = new ScriptExecutionMonitorForm(scriptLoader, DatabaseInsertionCommands);
-                    cancellationTokenSource = new CancellationTokenSource();
+                    cancellationTokenSourceSql = new CancellationTokenSource();
                     // Add call back references to the monitor to start up the script execution
                     scriptStatusCallBack = new StatusCallBackDelegate(monitor.StatusUpdate);
                     monitor.ShowDialog(this);
@@ -589,11 +693,11 @@ namespace SqlScriptRunner
                     // TODO: Start the asynchronous procedure to apply DB scripts into database. Use Cancellation token.
                     richTextBoxGeneratedContent.Clear();
                     ExecutionLogAction($"Start executing sequence with{(scriptLoader.WithTransaction ? "" : "out")} transaction", LogLevelEnum.Info);
-                    scriptLoader.ApplyScriptsToDatabase(dbContext, ExecutionLogAction, scriptStatusCallBack, cancellationTokenSource.Token);
+                    scriptLoader.ApplyScriptsToDatabase(dbContext, ExecutionLogAction, scriptStatusCallBack, cancellationTokenSourceSql.Token);
                     break;
                 case "Cancel":
                     // TODO: Cancel and roll back
-                    cancellationTokenSource.Cancel(throwOnFirstException: true);
+                    cancellationTokenSourceSql.Cancel(throwOnFirstException: true);
                     break;
                 case "Transaction":
                     scriptLoader.WithTransaction = subCommand.Length > 1 ? bool.Parse(subCommand[1]) : true;
