@@ -1,6 +1,6 @@
 ; Main constants - define following constants as you want them displayed in your installation wizard
 !define PRODUCT_NAME "SqlScriptRunner"
-!define PRODUCT_VERSION "1.0.1-alpha02"
+!define PRODUCT_VERSION "1.0.1-alpha03"
 !define PRODUCT_PUBLISHER "altncsab"
 !define PRODUCT_WEB_SITE "https://github.com/altncsab/altncsab"
 
@@ -42,6 +42,8 @@ Section "MainSection" SEC01
 
 ; It is pretty clear what following line does: just rename the file name to your project startup executable.
   CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\${PRODUCT_NAME}.exe" ""
+  CreateDirectory "$SMPROGRAMS\Altncsab\${PRODUCT_NAME}"
+  CreateShortCut "$SMPROGRAMS\Altncsab\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\${PRODUCT_NAME}.exe" 0
 SectionEnd 
 
 Section -Post
