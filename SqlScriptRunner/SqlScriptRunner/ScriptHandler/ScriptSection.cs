@@ -27,6 +27,7 @@ namespace SqlScriptRunner.ScriptHandler
         public bool IsOpenBlockComment { get; set; }
 
         public List<string> DependentObjectNames { get; private set; }
+        public bool ToBeSkipped { get; set; }
 
         public ScriptSection()
         {

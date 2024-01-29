@@ -12,6 +12,7 @@ Project page on Github: [github.com/altncsab](https://github.com/altncsab/altncs
 
 Date|Version|Description
 -|-|-
+2024.01.29|1.0.1-alpha04|Exclude script section from execution.
 2024.01.26|1.0.1-alpha03|Directory structure loading is asynchronous
 2024.01.25|1.0.1-alpha02|Moving the execution status text to footer on Execution monitor.
 2024.01.24|1.0.1-alpha01|Allow switch on / off transactions during script applying
@@ -197,7 +198,7 @@ If a database is configured this button become active. By pressing it a new sub 
 
 ![Script Execution Monitor](./Pictures/ScriptExecutionMonitor.png)
 
-In the top part showing up some settings. In the list view control we see all selected files as groups and "GO" sections inside. The order of the group is matching the file execution order. The column with hash (#) indicating the GO count inside the file. The Object column is the object name with the creation and the object type classification or if there is no clear script type than it is classifying the scrip section as "Script". Script classification is where certain object creation is happening. It is like Function, Procedure, Type, Table, View.
+In the top part showing up some settings. In the list view control we see all selected files as groups and "GO" sections inside. Each "GO" sections can be checked and unchecked. We can exclude script sections from the execution by uncheck it. The order of the group is matching the file execution order. The column with hash (#) indicating the GO count inside the file. The Object column is the object name with the creation and the object type classification or if there is no clear script type than it is classifying the scrip section as "Script". Script classification is where certain object creation is happening. It is like Function, Procedure, Type, Table, View.
 
 ### Checkbox "Allow Transaction"
 
@@ -241,7 +242,6 @@ The application is build for demonstration purpose. There is no guarantee it is 
 
 - Auto script drop statement if user asking for it.
 - Comment analysis result to the header of generated script (Like missing object or risk of failure.)
-- Checkbox to include / exclude script section in Execution monitor
 - Option to mark script item as skip if object already exists in Database
 - Option to allow inject drop statement if object already exists
 - Maybe a recreation procedure for type alteration problem, when a type in use but it must be changed. Those referenced object needs to be scripted dropped and recreated with the new type definition!

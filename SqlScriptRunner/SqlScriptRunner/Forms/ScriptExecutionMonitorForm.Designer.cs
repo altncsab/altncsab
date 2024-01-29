@@ -145,6 +145,7 @@
             // 
             // listViewExecution
             // 
+            this.listViewExecution.CheckBoxes = true;
             this.listViewExecution.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
@@ -160,6 +161,8 @@
             this.listViewExecution.TabIndex = 2;
             this.listViewExecution.UseCompatibleStateImageBehavior = false;
             this.listViewExecution.View = System.Windows.Forms.View.Details;
+            this.listViewExecution.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.listViewExecution_ItemCheck);
+            this.listViewExecution.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listViewExecution_ItemChecked);
             // 
             // columnHeader1
             // 
