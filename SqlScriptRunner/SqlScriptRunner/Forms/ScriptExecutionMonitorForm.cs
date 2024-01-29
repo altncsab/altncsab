@@ -64,6 +64,9 @@ namespace SqlScriptRunner.Forms
                         case ExecutionStatusEnum.Canceled:
                             item.BackColor = Color.WhiteSmoke;
                             break;
+                        case ExecutionStatusEnum.Skipped: 
+                            item.BackColor = Color.LightGray;
+                            break;
                         default:
                             item.BackColor = Color.White;
                             break;
@@ -104,7 +107,11 @@ namespace SqlScriptRunner.Forms
                         listViewExecution.Groups.Add(group);
                         foreach(ScriptSection scriptSection in script.ScriptSections)
                         {
-                            var item = new ListViewItem($"GO#{scriptSection.SectionId}", group);
+                            var item = new ListViewItem($"GO#{scriptSection.SectionId}", group) 
+                            { 
+                                Checked = !scriptSection.ToBeSkipped,
+                                Tag = scriptSection,
+                            };                            
                             listViewExecution.Items.Add(item);
                             if (!string.IsNullOrEmpty(scriptSection.ObjectName))
                             {
@@ -162,6 +169,39 @@ namespace SqlScriptRunner.Forms
             try
             {
                 commandAction?.Invoke(ScriptLoader, $"Transaction:{checkBoxAllowTransaction.Checked}");
+            }
+            catch (Exception ex)
+            {
+
+                this.ShowErrorMessage(ex);
+            }
+        }
+
+        private void listViewExecution_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            try
+            {
+                // Prevent to change checked state if script execution is ongoing
+                if (!buttonStart.Enabled)
+                {
+                    e.NewValue = e.CurrentValue;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                this.ShowErrorMessage(ex);
+            }
+        }
+
+        private void listViewExecution_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            try
+            {
+                if (e.Item.Tag is ScriptSection scriptSection)
+                {
+                    commandAction?.Invoke(ScriptLoader, $"SetSkip:{scriptSection.Script.Guid}:{scriptSection.SectionId}:{!e.Item.Checked}");
+                }
             }
             catch (Exception ex)
             {

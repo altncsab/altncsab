@@ -12,5 +12,6 @@ namespace SqlScriptRunner.ScriptHandler
         Completed,
         Failed,
         Canceled,
+        Skipped,
     }
 }

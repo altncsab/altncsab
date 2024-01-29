@@ -690,17 +690,24 @@ namespace SqlScriptRunner
             switch (subCommand[0])
             {
                 case "Start":
-                    // TODO: Start the asynchronous procedure to apply DB scripts into database. Use Cancellation token.
+                    // Start the asynchronous procedure to apply DB scripts into database. Use Cancellation token.
                     richTextBoxGeneratedContent.Clear();
                     ExecutionLogAction($"Start executing sequence with{(scriptLoader.WithTransaction ? "" : "out")} transaction", LogLevelEnum.Info);
                     scriptLoader.ApplyScriptsToDatabase(dbContext, ExecutionLogAction, scriptStatusCallBack, cancellationTokenSourceSql.Token);
                     break;
                 case "Cancel":
-                    // TODO: Cancel and roll back
+                    // Cancel and roll back
                     cancellationTokenSourceSql.Cancel(throwOnFirstException: true);
                     break;
                 case "Transaction":
                     scriptLoader.WithTransaction = subCommand.Length > 1 ? bool.Parse(subCommand[1]) : true;
+                    break;
+                case "SetSkip":
+                    var scriptName = Guid.Parse(subCommand[1]);
+                    var sectionId = int.Parse(subCommand[2]);
+                    var ToBeScipped = bool.Parse(subCommand[3]);
+                    // Find and set the new status for the addressed script section.
+                    scriptLoader.SetScriptSectionSkipState(scriptName, sectionId, ToBeScipped);
                     break;
                 default:
                     break;

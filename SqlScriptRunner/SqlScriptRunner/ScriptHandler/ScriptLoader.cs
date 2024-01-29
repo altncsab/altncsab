@@ -109,6 +109,12 @@ namespace SqlScriptRunner.ScriptHandler
             return Task.Run(() => 
             {                
                 IEnumerable<ScriptSection> scriptSequence = ScriptExecutionSequence();
+                // Reset the status of each scripts to null
+                foreach (var item in scriptSequence)
+                {
+                    item.Status = null;
+                    statusCallBack.Invoke(item);
+                }
                 var scriptApplyer = new ApplyScript() { WithTransaction = WithTransaction, LogFunction = ExecutionLogAction };
                 ScriptSection currScriptSection = null;
                 try
@@ -118,37 +124,45 @@ namespace SqlScriptRunner.ScriptHandler
                     {
                         currScriptSection = scriptSection;
                         currScriptSection.MessageLog.Clear();
-                        message = $"Start Executing: {currScriptSection.FilePath}/GO#{currScriptSection.SectionId}";
+                        message = $"Start Executing: '{currScriptSection.FilePath}', GO#{currScriptSection.SectionId}";
                         ExecutionLogAction?.Invoke(message, LogLevelEnum.Debug);
                         currScriptSection.MessageLog.Add(message);
                         currScriptSection.Status = ExecutionStatusEnum.Running;
                         statusCallBack.Invoke(currScriptSection);
-                        
-                        var result = (ExecutionStatusEnum)scriptApplyer.Execute(db, currScriptSection.OriginalContent, cancellationToken);
-                        if (result != ExecutionStatusEnum.Completed)
+                        if (scriptSection.ToBeSkipped)
                         {
-                            // There could be several scenario why we should not abort the operation.
-                            // TODO: Inspect the error message from the script applier and inject a drop section or empty body creation before retry function and procedure creation.
-                            // TODO: Table types in use needs special handling to replace!
-                            // Example: Cannot drop type 'dbo.MatrixType' because it is being referenced by object 'CreateXmlFromMatrix'. There may be other objects that reference this type.
-                            currScriptSection.Status = result;
-                            message = $"Execution failed: {currScriptSection.FilePath}, GO#{currScriptSection.SectionId}";
+                            currScriptSection.Status = ExecutionStatusEnum.Skipped;
+                            message = $"Script section skipped by user: '{currScriptSection.FilePath}', GO#{currScriptSection.SectionId}";
                             currScriptSection.MessageLog?.Add(message);
-                            ExecutionLogAction?.Invoke(message,LogLevelEnum.Error);
-                            currScriptSection.MessageLog?.AddRange(scriptApplyer.Errors.Cast<SqlError>().Select(se => $"ERROR:{se.Message}"));
-                            if (WithTransaction)
-                            {
-                                scriptApplyer.RollBackTransaction();
-                                message = "Rolling back all actions";
-                                currScriptSection.MessageLog?.Add(message);
-                                ExecutionLogAction?.Invoke(message, LogLevelEnum.Warn);
-                            }
-                            statusCallBack.Invoke(currScriptSection);
-                            break;
+                            ExecutionLogAction?.Invoke(message, LogLevelEnum.Warn);
                         }
-                        currScriptSection.Status = result;
+                        else
+                        {
+                            currScriptSection.Status = (ExecutionStatusEnum)scriptApplyer.Execute(db, currScriptSection.OriginalContent, cancellationToken);
+                            if (currScriptSection.Status != ExecutionStatusEnum.Completed)
+                            {
+                                // There could be several scenario why we should not abort the operation.
+                                // TODO: Inspect the error message from the script applier and inject a drop section or empty body creation before retry function and procedure creation.
+                                // TODO: Table types in use needs special handling to replace!
+                                // Example: Cannot drop type 'dbo.MatrixType' because it is being referenced by object 'CreateXmlFromMatrix'. There may be other objects that reference this type.
+
+                                message = $"Execution failed: '{currScriptSection.FilePath}', GO#{currScriptSection.SectionId}";
+                                currScriptSection.MessageLog?.Add(message);
+                                ExecutionLogAction?.Invoke(message, LogLevelEnum.Error);
+                                currScriptSection.MessageLog?.AddRange(scriptApplyer.Errors.Cast<SqlError>().Select(se => $"ERROR:{se.Message}"));
+                                if (WithTransaction)
+                                {
+                                    scriptApplyer.RollBackTransaction();
+                                    message = "Rolling back all actions";
+                                    currScriptSection.MessageLog?.Add(message);
+                                    ExecutionLogAction?.Invoke(message, LogLevelEnum.Warn);
+                                }
+                                statusCallBack.Invoke(currScriptSection);
+                                break;
+                            }
+                        }
                         currScriptSection.MessageLog?.AddRange(scriptApplyer.Messages);
-                        message = $"Execution completed: {currScriptSection.FilePath}, GO#{currScriptSection.SectionId}";
+                        message = $"Execution completed: '{currScriptSection.FilePath}', GO#{currScriptSection.SectionId}";
                         currScriptSection.MessageLog?.Add(message);
                         ExecutionLogAction?.Invoke(message, LogLevelEnum.Debug);
                         statusCallBack.Invoke(scriptSection);
@@ -165,7 +179,7 @@ namespace SqlScriptRunner.ScriptHandler
                         if (currScriptSection != null)
                         {
                             currScriptSection.Status = ExecutionStatusEnum.Failed;
-                            var message = $"Cancellation Requested: {currScriptSection.FilePath}, GO#{currScriptSection.SectionId}";
+                            var message = $"Cancellation Requested: '{currScriptSection.FilePath}', GO#{currScriptSection.SectionId}";
                             currScriptSection.MessageLog?.Add(message);
                             ExecutionLogAction?.Invoke(message, LogLevelEnum.Warn);
                             statusCallBack.Invoke(currScriptSection);
@@ -192,6 +206,20 @@ namespace SqlScriptRunner.ScriptHandler
                 }
             }, cancellationToken
             );
+        }
+        /// <summary>
+        /// Finding and setting the execution state of a script section
+        /// </summary>
+        /// <param name="guid">generated internal guid of the script object</param>
+        /// <param name="sectionId">the section id of the script section</param>
+        /// <param name="skipState">true for skip, false for not...</param>
+        public void SetScriptSectionSkipState(Guid guid, int sectionId, bool skipState)
+        {
+            var scriptSection = scriptSections.FirstOrDefault(ss => ss.Script?.Guid == guid && ss.SectionId == sectionId);
+            if (scriptSection != null)
+            {
+                scriptSection.ToBeSkipped = skipState;
+            }
         }
         /// <summary>
         /// Creates the full script for reference and with log?
