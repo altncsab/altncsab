@@ -76,6 +76,7 @@
     <Compile Include="ScriptHandler\ExecutionStatusEnum.cs" />
     <Compile Include="ScriptHandler\ObjectTypeNameEnum.cs" />
     <Compile Include="ScriptHandler\Script.cs" />
+    <Compile Include="ScriptHandler\ScriptCommandEnum.cs" />
     <Compile Include="ScriptHandler\ScriptLoader.cs" />
     <Compile Include="ScriptHandler\ScriptSection.cs" />
     <Compile Include="ScriptHandler\SqlTypes.cs" />

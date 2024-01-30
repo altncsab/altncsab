@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -29,6 +30,8 @@ namespace SqlScriptRunner.ScriptHandler
         public List<Script> ScriptFileList => scriptFileList;
         public bool WithTransaction { get; set; }
         public bool IsCompleted => !scriptSections?.Any(ss => ss.Status == null || ss.Status == ExecutionStatusEnum.Running) ?? true;
+
+        public bool SkipObjectIfExists { get; set; }
 
         private Action<string, LogLevelEnum?> LogAction;
         internal delegate void StatusCallBackDelegate(ScriptSection script);
@@ -138,30 +141,42 @@ namespace SqlScriptRunner.ScriptHandler
                         }
                         else
                         {
-                            currScriptSection.Status = (ExecutionStatusEnum)scriptApplyer.Execute(db, currScriptSection.OriginalContent, cancellationToken);
+                            currScriptSection.Status = (ExecutionStatusEnum)scriptApplyer.Execute(db, currScriptSection, cancellationToken);
                             if (currScriptSection.Status != ExecutionStatusEnum.Completed)
                             {
                                 // There could be several scenario why we should not abort the operation.
                                 // TODO: Inspect the error message from the script applier and inject a drop section or empty body creation before retry function and procedure creation.
                                 // TODO: Table types in use needs special handling to replace!
                                 // Example: Cannot drop type 'dbo.MatrixType' because it is being referenced by object 'CreateXmlFromMatrix'. There may be other objects that reference this type.
-
-                                message = $"Execution failed: '{currScriptSection.FilePath}', GO#{currScriptSection.SectionId}";
-                                currScriptSection.MessageLog?.Add(message);
-                                ExecutionLogAction?.Invoke(message, LogLevelEnum.Error);
-                                currScriptSection.MessageLog?.AddRange(scriptApplyer.Errors.Cast<SqlError>().Select(se => $"ERROR:{se.Message}"));
-                                if (WithTransaction)
+                                if (SkipObjectIfExists)
                                 {
-                                    scriptApplyer.RollBackTransaction();
-                                    message = "Rolling back all actions";
-                                    currScriptSection.MessageLog?.Add(message);
-                                    ExecutionLogAction?.Invoke(message, LogLevelEnum.Warn);
+                                    // check the log for specific error message look for error for existing object.
+                                    if (IsObjectAllreadyExistsError(currScriptSection))
+                                    {
+                                        currScriptSection.Status = ExecutionStatusEnum.Skipped;
+                                        message = $"Execution skipped: '{currScriptSection.FilePath}', GO#{currScriptSection.SectionId}";
+                                        currScriptSection.MessageLog?.Add(message);
+                                        ExecutionLogAction?.Invoke(message, LogLevelEnum.Warn);
+                                        statusCallBack.Invoke(currScriptSection);
+                                    }
                                 }
-                                statusCallBack.Invoke(currScriptSection);
-                                break;
+                                if (currScriptSection.Status != ExecutionStatusEnum.Skipped)
+                                {
+                                    message = $"Execution failed: '{currScriptSection.FilePath}', GO#{currScriptSection.SectionId}";
+                                    currScriptSection.MessageLog?.Add(message);
+                                    ExecutionLogAction?.Invoke(message, LogLevelEnum.Error);
+                                    if (WithTransaction)
+                                    {
+                                        scriptApplyer.RollBackTransaction();
+                                        message = "Rolling back all actions";
+                                        currScriptSection.MessageLog?.Add(message);
+                                        ExecutionLogAction?.Invoke(message, LogLevelEnum.Warn);
+                                    }
+                                    statusCallBack.Invoke(currScriptSection);
+                                    break;
+                                }
                             }
                         }
-                        currScriptSection.MessageLog?.AddRange(scriptApplyer.Messages);
                         message = $"Execution completed: '{currScriptSection.FilePath}', GO#{currScriptSection.SectionId}";
                         currScriptSection.MessageLog?.Add(message);
                         ExecutionLogAction?.Invoke(message, LogLevelEnum.Debug);
@@ -266,6 +281,35 @@ namespace SqlScriptRunner.ScriptHandler
         private void Log(string message, LogLevelEnum logLevel)
         {
             LogAction?.Invoke(message, logLevel);
+        }
+
+        private bool IsObjectAllreadyExistsError(ScriptSection scriptSection)
+        {
+            bool result = false;
+
+            if (scriptSection != null && scriptSection.MessageLog.Any(m => m.StartsWith("ERROR: ")))
+            {
+
+                Regex regEx;
+                if (string.IsNullOrEmpty(scriptSection.ObjectName))
+                {
+                    regEx = new Regex(@"((There is already an object named)|(The type)) '.+?' ((in the database)|(already exists))", RegexOptions.Compiled);
+                    result = scriptSection.MessageLog.Any(m => regEx.IsMatch(m));
+                }
+                else
+                {
+                    // make sure it is the same object
+                    regEx = new Regex(@"(?<=((There is already an object named)|(The type)) ')(.+?)(?=' ((in the database)|(already exists)))", RegexOptions.Compiled);
+                    var match = scriptSection.MessageLog.Select(ml => regEx.Match(ml)).FirstOrDefault(m => m.Success);
+                    if (match != null)
+                    {
+                        result = scriptSection.ObjectName.Contains(match.Value);
+                    }
+                }
+                
+            }
+
+            return result;
         }
     }
 }
