@@ -686,30 +686,38 @@ namespace SqlScriptRunner
         {
             //implement Start, Cancel commands, Setting settings separated with (:) colon.
             var subCommand = command.Split(':');
-            
-            switch (subCommand[0])
+            ScriptCommandEnum baseCommands = ScriptCommandEnum.Nothing;
+            _ = Enum.TryParse(subCommand[0], out baseCommands);
+            switch (baseCommands)
             {
-                case "Start":
+                case ScriptCommandEnum.Start:
                     // Start the asynchronous procedure to apply DB scripts into database. Use Cancellation token.
                     richTextBoxGeneratedContent.Clear();
                     ExecutionLogAction($"Start executing sequence with{(scriptLoader.WithTransaction ? "" : "out")} transaction", LogLevelEnum.Info);
                     scriptLoader.ApplyScriptsToDatabase(dbContext, ExecutionLogAction, scriptStatusCallBack, cancellationTokenSourceSql.Token);
                     break;
-                case "Cancel":
+                case ScriptCommandEnum.Cancel:
                     // Cancel and roll back
                     cancellationTokenSourceSql.Cancel(throwOnFirstException: true);
                     break;
-                case "Transaction":
+                case ScriptCommandEnum.Transaction:
                     scriptLoader.WithTransaction = subCommand.Length > 1 ? bool.Parse(subCommand[1]) : true;
                     break;
-                case "SetSkip":
-                    var scriptName = Guid.Parse(subCommand[1]);
-                    var sectionId = int.Parse(subCommand[2]);
-                    var ToBeScipped = bool.Parse(subCommand[3]);
-                    // Find and set the new status for the addressed script section.
-                    scriptLoader.SetScriptSectionSkipState(scriptName, sectionId, ToBeScipped);
+                case ScriptCommandEnum.SetSkip:
+                    if (subCommand.Length >= 4)
+                    {
+                        var scriptName = Guid.Parse(subCommand[1]);
+                        var sectionId = int.Parse(subCommand[2]);
+                        var ToBeScipped = bool.Parse(subCommand[3]);
+                        // Find and set the new status for the addressed script section.
+                        scriptLoader.SetScriptSectionSkipState(scriptName, sectionId, ToBeScipped);
+                    }
+                    break;
+                case ScriptCommandEnum.SkipIfExists:
+                    scriptLoader.SkipObjectIfExists = subCommand.Length > 1 ? bool.Parse(subCommand[1]) : true;
                     break;
                 default:
+                    // DO nothing
                     break;
             }
         }

@@ -80,8 +80,7 @@ namespace SqlScriptRunner.Forms
                 // if all script has a status than it is completed
                 if (ScriptLoader.IsCompleted)
                 {
-                    buttonStart.Enabled = true;
-                    checkBoxAllowTransaction.Enabled = true;
+                    SetSettingsAccess(true);
                     labelStatusText.Text = "Completed";
                 }
                 else
@@ -90,6 +89,14 @@ namespace SqlScriptRunner.Forms
                 }
                 Application.DoEvents(); // give time to UI to make updates
             }
+        }
+        
+        private void SetSettingsAccess(bool enabled)
+        {
+            // collect all settings to enable and disable:
+            buttonStart.Enabled = enabled;
+            checkBoxAllowTransaction.Enabled = enabled;
+            checkBoxSkipIfExists.Enabled = enabled;
         }
 
         private void ScriptExecutionMonitorForm_Load(object sender, EventArgs e)
@@ -138,7 +145,7 @@ namespace SqlScriptRunner.Forms
         {
             try
             {
-                commandAction?.Invoke(ScriptLoader, "Cancel");
+                commandAction?.Invoke(ScriptLoader, ScriptCommandEnum.Cancel.ToString());
                 this.Close();
             }
             catch (Exception ex)
@@ -152,9 +159,10 @@ namespace SqlScriptRunner.Forms
         {
             try
             {
-                commandAction?.Invoke(ScriptLoader, "Start");
-                buttonStart.Enabled = false;
-                checkBoxAllowTransaction.Enabled = false; // do not change the transaction state when it is running
+                commandAction?.Invoke(ScriptLoader, ScriptCommandEnum.Start.ToString());
+                // do not change the transaction state when it is running
+                SetSettingsAccess(false);                
+                
                 labelStatusText.Text = "Started";
             }
             catch (Exception ex)
@@ -168,7 +176,7 @@ namespace SqlScriptRunner.Forms
         {
             try
             {
-                commandAction?.Invoke(ScriptLoader, $"Transaction:{checkBoxAllowTransaction.Checked}");
+                commandAction?.Invoke(ScriptLoader, $"{ScriptCommandEnum.Transaction}:{checkBoxAllowTransaction.Checked}");
             }
             catch (Exception ex)
             {
@@ -200,8 +208,21 @@ namespace SqlScriptRunner.Forms
             {
                 if (e.Item.Tag is ScriptSection scriptSection)
                 {
-                    commandAction?.Invoke(ScriptLoader, $"SetSkip:{scriptSection.Script.Guid}:{scriptSection.SectionId}:{!e.Item.Checked}");
+                    commandAction?.Invoke(ScriptLoader, $"{ScriptCommandEnum.SetSkip}:{scriptSection.Script.Guid}:{scriptSection.SectionId}:{!e.Item.Checked}");
                 }
+            }
+            catch (Exception ex)
+            {
+
+                this.ShowErrorMessage(ex);
+            }
+        }
+
+        private void checkBoxSkipIfExists_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                commandAction?.Invoke(ScriptLoader, $"{ScriptCommandEnum.SkipIfExists}:{checkBoxSkipIfExists.Checked}");
             }
             catch (Exception ex)
             {

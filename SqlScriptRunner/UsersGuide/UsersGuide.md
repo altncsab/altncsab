@@ -45,6 +45,7 @@ Date|Version|Description
   - [Button "Apply To DB"](#button-apply-to-db)
   - [Script Execution Monitor](#script-execution-monitor)
     - [Checkbox "Allow Transaction"](#checkbox-allow-transaction)
+    - [Checkbox "Skip if object exists"](#checkbox-skip-if-object-exists)
     - [Button "Start"](#button-start)
     - [Button "Close"](#button-close)
   - [Closure and usage](#closure-and-usage)
@@ -205,6 +206,20 @@ In the top part showing up some settings. In the list view control we see all se
 This setting determines if the application should start a transaction when it starts to deploy the configured script sections.
 
 Default value: checked
+
+### Checkbox "Skip if object exists"
+
+This option allows to continue the script execution if the database is sending back error message:
+
+*There is already an object named '...' in the database.*
+
+OR
+
+*The type '...' already exists, or you do not have permission to create it.*
+
+The identified object must be under the same name as the object named in the error message.
+
+The skipped script will be marked as gray in Script Execution monitor and the skipping action is logged after the error message.
 
 ### Button "Start"
 

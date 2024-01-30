@@ -40,6 +40,7 @@
             this.listViewExecution = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.checkBoxSkipIfExists = new System.Windows.Forms.CheckBox();
             this.panelHeader.SuspendLayout();
             this.panelOptions.SuspendLayout();
             this.panelStatus.SuspendLayout();
@@ -57,6 +58,7 @@
             // 
             // panelOptions
             // 
+            this.panelOptions.Controls.Add(this.checkBoxSkipIfExists);
             this.panelOptions.Controls.Add(this.checkBoxAllowTransaction);
             this.panelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelOptions.Location = new System.Drawing.Point(0, 0);
@@ -172,6 +174,19 @@
             // 
             this.columnHeader2.Text = "Object";
             // 
+            // checkBoxSkipIfExists
+            // 
+            this.checkBoxSkipIfExists.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBoxSkipIfExists.Dock = System.Windows.Forms.DockStyle.Top;
+            this.checkBoxSkipIfExists.Location = new System.Drawing.Point(0, 16);
+            this.checkBoxSkipIfExists.Name = "checkBoxSkipIfExists";
+            this.checkBoxSkipIfExists.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
+            this.checkBoxSkipIfExists.Size = new System.Drawing.Size(288, 16);
+            this.checkBoxSkipIfExists.TabIndex = 1;
+            this.checkBoxSkipIfExists.Text = "Skip if object exists";
+            this.checkBoxSkipIfExists.UseVisualStyleBackColor = true;
+            this.checkBoxSkipIfExists.CheckedChanged += new System.EventHandler(this.checkBoxSkipIfExists_CheckedChanged);
+            // 
             // ScriptExecutionMonitorForm
             // 
             this.AcceptButton = this.buttonStart;
@@ -211,5 +226,6 @@
         private System.Windows.Forms.Panel panelOptions;
         private System.Windows.Forms.Panel panelStatus;
         private System.Windows.Forms.CheckBox checkBoxAllowTransaction;
+        private System.Windows.Forms.CheckBox checkBoxSkipIfExists;
     }
 }

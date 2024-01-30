@@ -13,6 +13,25 @@ namespace SqlScriptRunner.Database
     internal class ApplyScript : QueryBase
     {
         private bool isDone=false;
+        private ScriptSection currentScriptSection;
+        public object Execute(DbContext dbContext, ScriptSection scriptSection, params object[] args)
+        {
+            currentScriptSection = scriptSection;
+            return Execute(dbContext, scriptSection.OriginalContent, args);
+        }
+        internal override void SqlConnection_InfoMessage(object sender, SqlInfoMessageEventArgs e)
+        {
+            base.SqlConnection_InfoMessage(sender, e);
+            if (e.Errors.Count > 0)
+            {
+                currentScriptSection?.MessageLog
+                    .AddRange(e.Errors.Cast<SqlError>().Select(err => $"{(err.Number == 0 ? "INFO" : "ERROR")}: {err.Message}"));
+            }
+            else
+            {
+                currentScriptSection?.MessageLog.Add($"INFO: {e.Message}");
+            }
+        }
         public override object Execute(DbContext dbContext, string cmdText, params object[] args)
         {
             if (SqlConnection == null)
