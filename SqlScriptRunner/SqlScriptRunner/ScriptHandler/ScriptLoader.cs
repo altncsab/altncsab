@@ -303,7 +303,21 @@ namespace SqlScriptRunner.ScriptHandler
                     var match = scriptSection.MessageLog.Select(ml => regEx.Match(ml)).FirstOrDefault(m => m.Success);
                     if (match != null)
                     {
-                        result = scriptSection.ObjectName.Contains(match.Value);
+                        var parts = match.Value.Split('.');
+                        string schema = string.Empty;
+                        string dbObject = string.Empty;
+                        if (parts.Length == 1)
+                        {
+                            dbObject = parts[0].Trim().Trim('[', ']');
+                        }
+                        else if (parts.Length >= 2)
+                        {
+                            dbObject = parts[parts.Length - 1].Trim().Trim('[', ']');
+                            schema = parts[parts.Length - 2].Trim().Trim('[', ']');
+                        }
+                        result = string.Compare(scriptSection.ObjectName, dbObject, ignoreCase: true) == 0 
+                            && (string.IsNullOrEmpty(schema) 
+                                || string.Compare(scriptSection.ObjectSchema, schema, ignoreCase: true) == 0);
                     }
                 }
                 

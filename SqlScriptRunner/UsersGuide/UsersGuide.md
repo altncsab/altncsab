@@ -12,6 +12,8 @@ Project page on Github: [github.com/altncsab](https://github.com/altncsab/altncs
 
 Date|Version|Description
 -|-|-
+2024.01.31|1.0.1-alpha06|hot-fix: Skip if exists fails for SQL Types
+2024.01.30|1.0.1-alpha05|Skip if exists option added
 2024.01.29|1.0.1-alpha04|Exclude script section from execution.
 2024.01.26|1.0.1-alpha03|Directory structure loading is asynchronous
 2024.01.25|1.0.1-alpha02|Moving the execution status text to footer on Execution monitor.
